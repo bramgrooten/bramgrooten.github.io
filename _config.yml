@@ -1,12 +1,10 @@
 ### Site Settings ###
-title               : portfolYOU
+title               : Bram Grooten
 description         : >-
-                      I turn coffee :coffee: into code,
-                      use tabs over spaces
-                      and never broke production.
-baseurl             : "/portfolYOU"            # Change to empty quotes if you are hosting your site at <your-username>.github.io directly
-repository          : yousinix/portfolYOU      # Change to <your-username>/<your-username>.github.io (or remove it if you don't need remote projects)
-remote_theme        : yousinix/portfolYOU
+                      PhD candidate in Deep Learning at the TU Eindhoven.
+baseurl             : ""            # Change to empty quotes if you are hosting your site at <your-username>.github.io directly
+repository          : bramgrooten/bramgrooten.github.io      # Change to <your-username>/<your-username>.github.io (or remove it if you don't need remote projects)
+remote_theme        : bramgrooten/bramgrooten.github.io
 open_new_tab        : false                    # Opens external URLs in new tab (works for posts, projects and navbar only)
 
 
@@ -26,22 +24,22 @@ nav_exclude:                                            # The following paths ar
 author:
   name              : Bram Grooten
   image             : https://www.bramgrooten.nl/wp-content/uploads/2021/11/Grooten_Bram_MCS_VH_7976_PROM-2048x1365.jpg
-  behance           : your_username
+  twitter           : BramGrooten
+  github            : bramgrooten
+  linkedin          : bramgrooten
+# email             : username@domain.com
+# medium            : your_username
+# behance           : your_username
 # dribbble          : your_username
-  email             : username@domain.com
-  facebook          : your_username
-  github            : your_username
+# facebook          : your_username
 # gitlab            : your_username
 # instagram         : your_username
 # kaggle            : your_username
-  linkedin          : your_username
-  medium            : your_username
 # soundcloud        : your_username
 # spotify           : your_username
 # stackoverflow     : your_user_id
 # tumblr            : your_username.tumblr.com
 # twitch            : your_username
-  twitter           : your_username
 # vimeo             : your_username
 # youtube           : your_channel_name
 # keybase           : your_username
@@ -60,7 +58,7 @@ collections:
 
 ### Disqus ###
 disqus:
-  shortname: your-short-name-disqus                     # Your website Shortname on disqus
+  shortname: bramgrooten                     # Your website Shortname on disqus
 
 
 ### Analytics ###
