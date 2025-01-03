@@ -3,8 +3,8 @@ title               : Bram Grooten
 description         : >-
                       PhD candidate in Deep Learning at the TU Eindhoven.
 baseurl             : ""            # Change to empty quotes if you are hosting your site at <your-username>.github.io directly
-repository          : bramgrooten/bramgrooten.github.io      # Change to <your-username>/<your-username>.github.io (or remove it if you don't need remote projects)
-remote_theme        : bramgrooten/bramgrooten.github.io
+# repository          : bramgrooten/bramgrooten.github.io      # Change to <your-username>/<your-username>.github.io (or remove it if you don't need remote projects)
+remote_theme        : yousinix/portfolYOU
 open_new_tab        : false                    # Opens external URLs in new tab (works for posts, projects and navbar only)
 
 
@@ -23,7 +23,7 @@ nav_exclude:                                            # The following paths ar
 ### Author Info ###
 author:
   name              : Bram Grooten
-  image             : https://www.bramgrooten.nl/wp-content/uploads/2021/11/Grooten_Bram_MCS_VH_7976_PROM-2048x1365.jpg
+  image             : /assets/images/Grooten_Bram_2024_square_KB.jpg
   twitter           : BramGrooten
   github            : bramgrooten
   linkedin          : bramgrooten
