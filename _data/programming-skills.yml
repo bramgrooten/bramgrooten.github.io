@@ -1,11 +1,23 @@
-- name: HTML5/CSS3
-  percentage: 90
-  color: danger
+- name: Python
+  percentage: 95
+  color: primary
 
-- name: Go
-  percentage: 80
+- name: PyTorch
+  percentage: 90
+  color: secondary
+
+- name: TensorFlow
+  percentage: 55
+  color: info
+
+- name: JAX
+  percentage: 55
+  color: info
+
+- name: C++
+  percentage: 45
   color:
 
-- name: Python
-  percentage: 70
-  color: secondary
+# these are all the colors:
+# primary, secondary, success, danger, warning, info, light, dark
+# you can also use hex colors like #ff0000
