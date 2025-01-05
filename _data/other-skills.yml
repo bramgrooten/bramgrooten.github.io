@@ -1,7 +1,19 @@
-- name: Adobe Photoshop
+- name: Reinforcement Learning
   percentage: 95
-  color: info
+  color: success
 
-- name: Adobe Illustrator
+- name: Deep Learning
   percentage: 90
   color: success
+
+- name: Applied Mathematics
+  percentage: 90
+  color: light
+
+- name: Research
+  percentage: 85
+  color: light
+
+- name: Teaching
+  percentage: 85
+  color: light

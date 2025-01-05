@@ -4,7 +4,7 @@
 
 - name: PyTorch
   percentage: 90
-  color: secondary
+  color: info
 
 - name: TensorFlow
   percentage: 55
@@ -16,7 +16,7 @@
 
 - name: C++
   percentage: 45
-  color:
+  color: primary
 
 # these are all the colors:
 # primary, secondary, success, danger, warning, info, light, dark
