@@ -15,7 +15,7 @@ I am a PhD student in Deep Learning at the TU Eindhoven, started in November 202
 
 My research focuses on **Reinforcement Learning** and **Sparse Training** of neural networks. I’m in the [Data and Artificial Intelligence](https://dai.win.tue.nl/team/) cluster with supervisors [Decebal Mocanu](https://wwwen.uni.lu/recherche/fstm/dcs/members/decebal_constantin_mocanu) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/).
 
-In 2023 I visited the **University of Alberta** for 5 months as part of my PhD, joining the [Intelligent Robot Learning](https://irll.ca/team/) lab of Matthew Taylor.
+In 2023, I visited the **University of Alberta** for 5 months as part of my PhD, joining the [Intelligent Robot Learning](https://irll.ca/team/) lab of Matthew Taylor.
 
 {% include elements/video.html id="oYzQ60xUlDM" %}
 
