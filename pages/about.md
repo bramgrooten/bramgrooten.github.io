@@ -17,7 +17,7 @@ My research focuses on **Reinforcement Learning** and **Sparse Training** of neu
 
 In 2023, I visited the **University of Alberta** for 5 months as part of my PhD, joining the [Intelligent Robot Learning](https://irll.ca/team/) lab of Matthew Taylor.
 
-{% include elements/video.html id="oYzQ60xUlDM" %}
+{% include elements/video.html id="oYzQ60xUlDM" caption="Presenting my PhD research at the University of Alberta, August 2023." %}
 
 In 2021, I finished two masters at the TU Eindhoven called:
 

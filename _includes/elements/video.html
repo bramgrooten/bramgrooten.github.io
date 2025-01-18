@@ -1,12 +1,11 @@
 <div class="video">
-  <iframe src="https://www.youtube.com/embed/{{ include.id }}" frameborder="0" allowfullscreen></iframe>
-  <p class="video-caption" style="color: red; display: block; font-size: 18px; margin-top: 10px; background-color: yellow; text-align: center; position: relative; z-index: 10;">Vid caption here.</p>
+  <iframe src="https://www.youtube.com/embed/{{ include.id }}" frameborder="0" allowfullscreen style="display: block; margin: 0 auto;"></iframe>
 </div>
+
+{% if include.caption %}
+<p class="video-caption">{{ include.caption }}</p>
+{% endif %}
 
 <!-- <div class="video">
   <iframe width="560" height="315" src="https://www.youtube.com/embed/oYzQ60xUlDM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </div> -->
-
-<!-- {% if include.caption %}
-<p class="video-caption">{{ include.caption }}</p>
-{% endif %} -->
