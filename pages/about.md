@@ -26,7 +26,7 @@ In 2021, I finished two masters at the TU Eindhoven called:
 
 You can find both master theses on [my TU/e page](https://research.tue.nl/en/persons/bram-j-grooten). The thesis for IAM was titled: _Deep Reinforcement Learning for the cooperative card game Hanabi_.
 
-{% include elements/video.html id="5vZ-rrWSivM" %}
+{% include elements/video.html id="5vZ-rrWSivM" caption="Master's thesis presentation, Sept 2021." %}
 
 <div class="row">
 {% include about/skills.html title="Programming Skills" source=site.data.programming-skills %}
