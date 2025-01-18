@@ -8,12 +8,18 @@
 
 - name: Applied Mathematics
   percentage: 90
-  color: light
+  color: secondary
 
 - name: Research
   percentage: 85
-  color: light
+  color: secondary
 
 - name: Teaching
   percentage: 85
-  color: light
+  color: secondary
+
+
+# these are all the colors:
+# primary, secondary, success, danger, warning, info
+# probably don't use: light, dark
+# you can also use hex colors like #ff0000

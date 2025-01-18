@@ -19,5 +19,6 @@
   color: primary
 
 # these are all the colors:
-# primary, secondary, success, danger, warning, info, light, dark
+# primary, secondary, success, danger, warning, info
+# probably don't use: light, dark
 # you can also use hex colors like #ff0000
