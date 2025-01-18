@@ -5,11 +5,11 @@ permalink: /about/
 weight: 3
 ---
 
+_This website is still under development._
+
 # **About Me**
 
 Hi I am Bram Grooten :wave:,<br>
-
-This website is still under development.
 
 I am a PhD student in Deep Learning at the TU Eindhoven, started in November 2021. Currently doing an internship at Sony AI in the [Gran Turismo](https://www.nature.com/articles/s41586-021-04357-7) team on generalization in deep reinforcement learning.
 
