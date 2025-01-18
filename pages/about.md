@@ -19,6 +19,15 @@ In 2023, I visited the **University of Alberta** for 5 months as part of my PhD,
 
 {% include elements/video.html id="oYzQ60xUlDM" %}
 
+In 2021, I finished two masters at the TU Eindhoven called:
+
+- Industrial and Applied Mathematics ([IAM](https://www.tue.nl/en/education/graduate-school/master-industrial-and-applied-mathematics/))
+- Science Education and Communication ([SEC](https://www.tue.nl/en/education/graduate-school/master-science-education))
+
+You can find both master theses on [my TU/e page](https://research.tue.nl/en/persons/bram-j-grooten). The thesis for IAM was titled: _Deep Reinforcement Learning for the cooperative card game Hanabi_.
+
+{% include elements/video.html id="5vZ-rrWSivM" %}
+
 <div class="row">
 {% include about/skills.html title="Programming Skills" source=site.data.programming-skills %}
 {% include about/skills.html title="Other Skills" source=site.data.other-skills %}
