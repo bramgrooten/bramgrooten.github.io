@@ -28,6 +28,9 @@ You can find both master theses on [my TU/e page](https://research.tue.nl/en/per
 
 {% include elements/video.html id="5vZ-rrWSivM" caption="Master's thesis presentation, Sept 2021." %}
 
+For my bachelor of Applied Mathematics, I studied abroad in the US at Wentworth Institute of Technology. My [bachelor’s thesis](https://www.bramgrooten.nl/projects/graph-optimization/) used graph theory and optimization for an assignment problem.
+<!-- todo: update link to bachelor thesis project on this website -->
+
 <div class="row">
 {% include about/skills.html title="Programming Skills" source=site.data.programming-skills %}
 {% include about/skills.html title="Other Skills" source=site.data.other-skills %}
