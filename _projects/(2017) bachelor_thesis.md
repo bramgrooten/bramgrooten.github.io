@@ -2,7 +2,7 @@
 name: Bachelor's thesis
 tools: [Mathematics, Graph theory]
 image: /assets/images/bipartite_graph.png
-description: Created a bipartite b-matching optimization algorithm, which improves real-world pupil-school matchings.
+description: Created a bipartite b-matching optimization algorithm, which improves real-world pupil-school assignments in Amsterdam.
 # external_url: https://github.com/yousinix
 ---
 
