@@ -1,7 +1,7 @@
 ---
 name: Junction Hackathon
 tools: [Python]
-image: # to add
+image: /assets/images/cosmic2222.png
 description: Participated in a hackathon about challenges in the year 2222.
 # external_url: 
 ---
