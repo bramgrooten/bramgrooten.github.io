@@ -14,4 +14,5 @@ We designed and implemented our project called “Cosmic Quest”. It’s an alg
 
 See our [demo here](https://junction-2022-cosmic-quest.vercel.app/).
 
+The code and more information can be found on our [GitHub repository](https://github.com/bramgrooten/cosmic-quest).
 <!-- More information can be found on our [project page](https://app.hackjunction.com/projects/junction-2022-1/view/636575a33b628c004dbefd37). -->
