@@ -2,7 +2,7 @@
 name: Junction Hackathon
 tools: [Python]
 image: # to add
-description: Read about the bipartite b-matching optimization algorithm I developed.
+description: Participated in a hackathon about challenges in the year 2222.
 # external_url: 
 ---
 
