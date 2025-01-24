@@ -2,7 +2,7 @@
 name: Serpentine AI
 tools: [Python, Java]
 image: /assets/images/serpentine_logo.svg
-description: Team-lead in multiple AI programming contests, winning prizes in two of them.
+description: Team-lead in four AI programming contests, winning prizes in two of them.
 # external_url: 
 ---
 
