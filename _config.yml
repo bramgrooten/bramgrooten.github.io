@@ -23,12 +23,12 @@ nav_exclude:                                            # The following paths ar
 author:
   name              : Bram Grooten
   image             : /assets/images/Grooten_Bram_2024_square_KB.jpg
-  twitter           : BramGrooten
-  X                 : BramGrooten
-  github            : bramgrooten
+  # twitter           : BramGrooten
   scholar           : zkYA_KEAAAAJ
-  linkedin          : bramgrooten
+  github            : bramgrooten
   bluesky           : bramgrooten.bsky.social
+  X                 : BramGrooten
+  linkedin          : bramgrooten
 # email             : username@domain.com
 # medium            : your_username
 # behance           : your_username
