@@ -1,6 +1,11 @@
 # Get Icons  from : https://fontawesome.com/icons
 # Get Colors from : https://brandcolors.net/
 
+scholar:
+  url   : https://scholar.google.com/citations?user=
+  icon  : fab fa-google-scholar
+  color : 4285f4
+
 behance:
   url   : https://www.behance.net/
   icon  : fab fa-behance
@@ -76,9 +81,19 @@ twitch:
   icon  : fab fa-twitch
   color : 6441a5
 
+X:
+  url   : https://www.x.com/
+  icon  : fab fa-x-twitter
+  color : 14171a
+
 twitter:
   url   : https://www.twitter.com/
   icon  : fab fa-twitter
+  color : 1da1f2
+
+bluesky:
+  url   : https://bsky.app/profile/
+  icon  : fab fa-bluesky
   color : 1da1f2
 
 vimeo:
