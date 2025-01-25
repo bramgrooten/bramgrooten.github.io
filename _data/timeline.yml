@@ -9,7 +9,8 @@
   from: 2018
   to: 2021
   description: Graduated cum laude. Thesis on multi-agent deep reinforcement 
-    learning for Hanabi.
+    learning for the cooperative card game Hanabi. We published a paper based on this work,
+    titled "[Is Vanilla Policy Gradient Overlooked? Analyzing Deep Reinforcement Learning for Hanabi](https://arxiv.org/abs/2203.11656)".
 
 - title: Master Science Education, TU Eindhoven, Netherlands
   from: 2018
