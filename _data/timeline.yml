@@ -3,19 +3,23 @@
   to: present
   description: Research on dynamic sparse training in deep reinforcement learning, 
     improving the efficiency and focus of neural networks, testing on benchmarks 
-    such as the UR5 Robotic Arm.
+    such as MuJoCo and the UR5 Robotic Arm. 
+    See my [Google Scholar](https://scholar.google.gr/citations?user=zkYA_KEAAAAJ) for a list of publications.
 
 - title: Master Applied Mathematics, TU Eindhoven, Netherlands
   from: 2018
   to: 2021
   description: Graduated cum laude. Thesis on multi-agent deep reinforcement 
     learning for the cooperative card game Hanabi. We published a paper based on this work,
-    titled "[Is Vanilla Policy Gradient Overlooked? Analyzing Deep Reinforcement Learning for Hanabi](https://arxiv.org/abs/2203.11656)".
+    titled "Is Vanilla Policy Gradient Overlooked? Analyzing Deep Reinforcement Learning for Hanabi". 
+    See the paper on [arXiv](https://arxiv.org/abs/2203.11656).
 
 - title: Master Science Education, TU Eindhoven, Netherlands
   from: 2018
   to: 2021
   description: Acquired the official license to teach mathematics in Dutch high schools.
+    Taught math classes to all levels of high school students, during two half-year internships 
+    at _het Maaslandcollege_ in Oss and _het Van Maerlantlyceum_ in Eindhoven.
 
 - title: Bachelor Applied Mathematics, Wentworth Institute of Technology, USA
   from: 2014
