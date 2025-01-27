@@ -38,3 +38,8 @@ For my bachelor of Applied Mathematics, I studied abroad in the US at Wentworth 
 <div class="row">
 {% include about/timeline.html %}
 </div>
+
+## CV
+
+See [my CV here](/assets/pdfs/CV_BramGrooten_Jan2025.pdf). Last updated: January 2025.
+[Google Scholar page](https://scholar.google.com/citations?user=zkYA_KEAAAAJ)
