@@ -28,7 +28,7 @@ You can find both master theses on [my TU/e page](https://research.tue.nl/en/per
 
 {% include elements/video.html id="5vZ-rrWSivM" caption="Master's thesis presentation, Sept 2021." %}
 
-For my bachelor of Applied Mathematics, I studied abroad in the US at Wentworth Institute of Technology. My [bachelor’s thesis](/projects/bachelor-thesis) used graph theory and optimization for a matching assignment problem.
+For my bachelor of Applied Mathematics, I started my studies at Wentworth Institute of Technology, in Boston, USA. My [bachelor’s thesis](/projects/bachelor-thesis) used graph theory and optimization for a matching assignment problem.
 
 <div class="row">
 {% include about/skills.html title="Programming Skills" source=site.data.programming-skills %}
