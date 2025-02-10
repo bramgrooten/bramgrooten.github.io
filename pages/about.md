@@ -41,5 +41,5 @@ For my bachelor of Applied Mathematics, I started my studies at Wentworth Instit
 
 ## CV
 
-See [my CV here](/assets/pdfs/CV_BramGrooten_Jan2025.pdf). Last updated: January 2025.
+See [my CV here](/assets/pdfs/CV_BramGrooten.pdf). Last updated: January 2025.
 [Google Scholar page](https://scholar.google.com/citations?user=zkYA_KEAAAAJ).
