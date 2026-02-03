@@ -1,29 +1,35 @@
-- title: PhD student, TU Eindhoven, Netherlands
-  from: 2021
-  to: present
-  description: Research on dynamic sparse training in deep reinforcement learning, 
-    improving the efficiency and focus of neural networks, testing on benchmarks 
-    such as MuJoCo and the UR5 Robotic Arm. 
-    See my [Google Scholar](https://scholar.google.gr/citations?user=zkYA_KEAAAAJ) page for a list of publications.
 
-- title: Master Applied Mathematics, TU Eindhoven, Netherlands
+- title: Postdoctoral Researcher
+  from: 2026
+  to: present
+  description: As a postdoc in the [AMOR/e](https://amore-labs.github.io/website/) lab (Advanced Models through Open Research and Engineering),
+    I work on multimodal foundation models for robotics. We aim to increase the functionality of open-source Vision-Language-Action models (VLAs).
+
+- title: PhD Candidate
+  from: 2022
+  to: 2026
+  description: Research on dynamic sparse training in deep reinforcement learning, 
+    improving the adaptiveness, efficiency, and focus of neural networks. We test on benchmarks 
+    such as the DeepMind Control Suite, MuJoCo, and the UR5 Robotic Arm.
+
+- title: Master Applied Mathematics
   from: 2018
   to: 2021
-  description: Graduated cum laude. Thesis on multi-agent deep reinforcement 
-    learning for the cooperative card game Hanabi. We published a paper based on this work,
+  description: Graduated cum laude. [Thesis](https://research.tue.nl/en/studentTheses/deep-reinforcement-learning-for-the-cooperative-card-game-hanabi/) 
+    on multi-agent deep reinforcement learning for the cooperative card game Hanabi. We published a paper based on this work,
     titled "Is Vanilla Policy Gradient Overlooked? Analyzing Deep Reinforcement Learning for Hanabi". 
     See the paper on [arXiv](https://arxiv.org/abs/2203.11656).
 
-- title: Master Science Education, TU Eindhoven, Netherlands
+- title: Master Science Education
   from: 2018
   to: 2021
   description: Acquired the official license to teach mathematics in Dutch high schools.
     Taught math classes to all levels of high school students, during two half-year internships 
     at _het Maaslandcollege_ in Oss and _het Van Maerlantlyceum_ in Eindhoven.
 
-- title: Bachelor Applied Mathematics, Wentworth Institute of Technology, USA
+- title: Bachelor Applied Mathematics
   from: 2014
   to: 2017
-  description: Studied abroad in Boston for my first year, 
+  description: Studied abroad in Boston at Wentworth Institute of Technology for my first year, 
     after which I continued at the TU Eindhoven in the Netherlands. 
     Played varsity baseball for the Wentworth Leopards.
