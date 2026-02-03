@@ -5,7 +5,6 @@ permalink: /about/
 weight: 3
 ---
 
-_This website is still under development._
 
 # **About Me**
 
