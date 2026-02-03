@@ -29,10 +29,10 @@ You can find both master theses on [my TU/e page](https://research.tue.nl/en/per
 
 For my bachelor of Applied Mathematics, I started my studies at Wentworth Institute of Technology, in Boston, USA. My [bachelor’s thesis](/projects/bachelor-thesis) used graph theory and optimization for a matching assignment problem.
 
-<div class="row">
+<!-- <div class="row">
 {% include about/skills.html title="Programming Skills" source=site.data.programming-skills %}
 {% include about/skills.html title="Other Skills" source=site.data.other-skills %}
-</div>
+</div> -->
 
 <div class="row">
 {% include about/timeline.html %}
