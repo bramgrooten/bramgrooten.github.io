@@ -6,15 +6,20 @@ weight: 3
 ---
 
 
-# **About Me**
+# Bram Grooten
 
-Hi I am Bram Grooten :wave:,<br>
+I am a postdoc in the the [AMOR/e](https://amore-labs.github.io/website/) lab at the **TU Eindhoven**, working with [Joaquin Vanschoren](https://joaquinvanschoren.github.io/home/) on vision-language-action models for robotics. In 2026, I am finishing my PhD on generalization in deep reinforcement learning, supervised by [Decebal Mocanu](https://www.uni.lu/fstm-en/people/decebal-constantin-mocanu/) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/). Research interests include robotics, VLAs, RL, generalization, sparse neural networks.
 
-I am a PhD student in Deep Learning at the TU Eindhoven, started in November 2021. Currently doing an internship at Sony AI in the [Gran Turismo](https://www.nature.com/articles/s41586-021-04357-7) team on generalization in deep reinforcement learning.
+During my PhD, I did an internship at **Sony AI** in the [Gran Turismo](https://www.nature.com/articles/s41586-021-04357-7) team.
+We published a paper on large-scale generalization, accepted as an oral at AAAI 2026. Read the paper on [arXiv](https://arxiv.org/pdf/2511.09737)
+and see the presentation below.
 
-My research focuses on **Reinforcement Learning** and **Sparse Training** of neural networks. I’m in the [Data and Artificial Intelligence](https://dai.win.tue.nl/team/) cluster with supervisors [Decebal Mocanu](https://wwwen.uni.lu/recherche/fstm/dcs/members/decebal_constantin_mocanu) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/).
+{% include elements/video.html id="gRp62ZG3Xic" caption="Presentation of the SPARC paper with Sony AI at AAAI, Jan 2026." %}
 
-In 2023, I visited the **University of Alberta** for 5 months as part of my PhD, joining the [Intelligent Robot Learning](https://irll.ca/team/) lab of Matthew Taylor.
+
+In 2023, I visited the **University of Alberta** for 5 months as part of my PhD, joining the 
+[Intelligent Robot Learning](https://irll.ca/team/) lab of Matthew Taylor.
+See the talk I gave in the AI Seminar Series by [Amii](https://www.amii.ca/) below.
 
 {% include elements/video.html id="oYzQ60xUlDM" caption="Presenting my PhD research at the University of Alberta, August 2023." %}
 
