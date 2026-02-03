@@ -8,6 +8,8 @@ weight: 3
 
 # Bram Grooten
 
+[CV.pdf](/assets/pdfs/CV_BramGrooten.pdf)
+
 I am a postdoc in the the [AMOR/e](https://amore-labs.github.io/website/) lab at the **TU Eindhoven**, working with [Joaquin Vanschoren](https://joaquinvanschoren.github.io/home/) on vision-language-action models for robotics. In 2026, I am finishing my PhD on generalization in deep reinforcement learning, supervised by [Decebal Mocanu](https://www.uni.lu/fstm-en/people/decebal-constantin-mocanu/) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/). Research interests include robotics, VLAs, RL, generalization, sparse neural networks.
 
 During my PhD, I did an internship at **Sony AI** in the [Gran Turismo](https://www.nature.com/articles/s41586-021-04357-7) team.
@@ -45,5 +47,5 @@ For my bachelor of Applied Mathematics, I started my studies at Wentworth Instit
 
 ## CV
 
-See [my CV here](/assets/pdfs/CV_BramGrooten.pdf). Last updated: January 2025.
-[Google Scholar page](https://scholar.google.com/citations?user=zkYA_KEAAAAJ).
+See [my CV here](/assets/pdfs/CV_BramGrooten.pdf). Last updated: Feb 2026.
+[Google Scholar](https://scholar.google.com/citations?user=zkYA_KEAAAAJ).
