@@ -3,10 +3,12 @@ layout: page
 permalink: /
 ---
 
+
 <div class="row justify-content-center align-items-center p-4">
   <div class="col-lg-4 col-md-6 text-center mt-0">
 
-    <img src="{{ site.author.image }}" 
+    <img id="profile-pic"
+         src="assets/images/bram/bram1.webp" 
          alt="{{ site.title }}" 
          class="rounded-circle shadow-sm" 
          style="width: 200px; height: 200px; object-fit: cover;">
@@ -21,6 +23,7 @@ permalink: /
 
   </div>
 </div>
+
 
 I'm a postdoc in the [AMOR/e](https://amore-labs.github.io/website/) lab at the **TU Eindhoven**, working with [Joaquin Vanschoren](https://joaquinvanschoren.github.io/home/) on vision-language-action models for robotics. In 2026, I am completing my PhD on generalization in deep reinforcement learning, supervised by [Decebal Mocanu](https://www.uni.lu/fstm-en/people/decebal-constantin-mocanu/) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/). Research interests include robotics, VLAs, RL, generalization, sparse neural networks.
 
@@ -67,3 +70,32 @@ For my bachelor of Applied Mathematics, I started my studies at Wentworth Instit
 
 See [my CV here](/assets/pdfs/CV_BramGrooten.pdf). Last updated: Feb 2026.
 [Google Scholar](https://scholar.google.com/citations?user=zkYA_KEAAAAJ).
+
+
+
+
+
+<script>
+  const totalImages = 4;
+  const storageKey = 'bramImageIndex';
+  let currentIndex = sessionStorage.getItem(storageKey);
+
+  if (!currentIndex) {
+    currentIndex = 1;
+  } else {
+    currentIndex = parseInt(currentIndex) + 1;
+    if (currentIndex > totalImages) {
+      currentIndex = 1;
+    }
+  }
+
+  sessionStorage.setItem(storageKey, currentIndex);
+
+  if (currentIndex > 1) {
+    const imgElement = document.getElementById('profile-pic');
+    if (imgElement) {
+      imgElement.src = `assets/images/bram/bram${currentIndex}.webp`;
+    }
+  }
+</script>
+

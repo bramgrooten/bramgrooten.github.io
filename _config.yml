@@ -22,11 +22,11 @@ nav_exclude:                                            # The following paths ar
 ### Author Info ###
 author:
   name              : Bram Grooten
-  image             : /assets/images/Grooten_Bram_2024_square_KB.jpg
-  # twitter           : BramGrooten
+  image             : /assets/images/bram/bram1.webp
   scholar           : zkYA_KEAAAAJ
   github            : bramgrooten
   bluesky           : bramgrooten.bsky.social
+  # twitter           : BramGrooten
   X                 : BramGrooten
   linkedin          : bramgrooten
 # email             : username@domain.com
