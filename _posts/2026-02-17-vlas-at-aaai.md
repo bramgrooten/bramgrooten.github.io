@@ -126,7 +126,7 @@ that we should all be using more for our VLA evaluations. And when talking about
 
 
 ### More VLA background
-See the nice overview blog [State of VLA Research at ICLR 2026](https://mbreuss.github.io/blog_post_iclr_26_vla.html)  by Moritz Reuss. 
+See the nice overview blog [State of VLA Research at ICLR 2026](https://mbreuss.github.io/blog_post_iclr_26_vla.html) by Moritz Reuss. 
 He mentions important simulation benchmarks, their current SoTA scores, and many relevant papers of course.
 
 
