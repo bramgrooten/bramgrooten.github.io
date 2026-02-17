@@ -114,14 +114,15 @@ Paper: [arxiv.org/abs/2412.05718](https://arxiv.org/abs/2412.05718).
 
 Katerina presented many interesting projects, centered around "Embodied Agents that See, Simulate, and Reason."
 She talked about _3Difying_ the current VLAs, for example with the [UniVLG](https://arxiv.org/abs/2503.10745) approach. 
+Sidenote: I've recently read Vincent Sitzmann's blog on the [bitter lesson for computer vision](https://www.vincentsitzmann.com/blog/bitter_lesson_of_cv/), where he argues that we actually won't need 3D inputs.
 
-Furthermore, she shared useful knowledge on VLAs, e.g., that diffusion seems to work better than regression for action generation.
+Furthermore, Katerina shared useful knowledge on VLAs, e.g., that diffusion seems to work better than regression for action generation.
 The speculated reason being the ability of diffusion models to better model the multi-modal distributions of actions, instead of simply regressing to the (suboptimal) average.
 However, she did mention that a recent paper "[Much Ado About Noising](https://arxiv.org/abs/2512.01809)" seems to find other, more prominent reasons. 
 
-Finally, Katerina mentioned the [RoboArena](https://robo-arena.github.io/), 
+Finally, she mentioned the [RoboArena](https://robo-arena.github.io/), 
 that we should all be using more for our VLA evaluations. And when talking about simulation, she predicted that
-"in 5 years we won't have physics engines anymore, it's all going to be neural [networks]."
+"in 5 years we won't have physics engines anymore, it's all going to be neural."
 
 
 ### More VLA background
