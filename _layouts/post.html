@@ -35,3 +35,58 @@ layout: page
   {% include blog/disqus.html %}
 </div>
 {% endif %}
+
+
+
+
+
+<!-- For WBW-style footnotes: -->
+
+<script>
+function positionPopup(trigger) {
+  const note = trigger.closest('.wbw-note');
+  const popup = note.querySelector('.wbw-content');
+  const rect = trigger.getBoundingClientRect();
+  const popupWidth = Math.min(280, window.innerWidth * 0.85);
+  const margin = 12;
+
+  popup.style.width = popupWidth + 'px';
+
+  let left = rect.left + rect.width / 2 - popupWidth / 2;
+  left = Math.max(margin, Math.min(left, window.innerWidth - popupWidth - margin));
+  popup.style.left = left + 'px';
+
+  const popupHeight = popup.offsetHeight;
+  let top = rect.top - popupHeight - 8;
+  if (top < margin) top = rect.bottom + 8;
+  popup.style.top = top + 'px';
+}
+
+let activeTrigger = null;
+
+document.querySelectorAll('.wbw-trigger').forEach(trigger => {
+  trigger.addEventListener('click', e => {
+    e.stopPropagation();
+    const note = trigger.closest('.wbw-note');
+    const wasOpen = note.classList.contains('open');
+
+    document.querySelectorAll('.wbw-note.open').forEach(n => n.classList.remove('open'));
+    activeTrigger = null;
+
+    if (wasOpen) return;
+
+    note.classList.add('open');
+    activeTrigger = trigger;
+    positionPopup(trigger);
+  });
+});
+
+window.addEventListener('scroll', () => {
+  if (activeTrigger) positionPopup(activeTrigger);
+}, { passive: true });
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.wbw-note.open').forEach(n => n.classList.remove('open'));
+  activeTrigger = null;
+});
+</script>

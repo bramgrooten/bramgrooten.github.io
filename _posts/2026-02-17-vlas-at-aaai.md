@@ -113,8 +113,7 @@ Paper: [arxiv.org/abs/2412.05718](https://arxiv.org/abs/2412.05718).
 ### Keynote by Katerina Fragkiadaki
 
 Katerina presented many interesting projects, centered around "Embodied Agents that See, Simulate, and Reason."
-She talked about _3Difying_ the current VLAs, for example with the [UniVLG](https://arxiv.org/abs/2503.10745) approach. 
-Sidenote: I've recently read Vincent Sitzmann's blog on the [bitter lesson for computer vision](https://www.vincentsitzmann.com/blog/bitter_lesson_of_cv/), where he argues that we actually won't need 3D inputs.
+She talked about _3Difying_ the current VLAs, for example with the [UniVLG](https://arxiv.org/abs/2503.10745) approach.<span class="wbw-note"><span class="wbw-trigger">1</span><span class="wbw-content">Sidenote: I recently read Vincent Sitzmann's blog on the <a href="https://www.vincentsitzmann.com/blog/bitter_lesson_of_cv/" target="_blank">bitter lesson for computer vision</a>, where he argues that we actually won't need 3D inputs.</span></span>
 
 Furthermore, Katerina shared useful knowledge on VLAs, e.g., that diffusion seems to work better than regression for action generation.
 The speculated reason being the ability of diffusion models to better model the multi-modal distributions of actions, instead of simply regressing to the (suboptimal) average.
@@ -176,4 +175,5 @@ We aimed to create a single RL agent that can drive all the ~500 cars in the Pla
 This required some clever techniques to improve generalization, like providing the environment's context and history to the agent.
 Read more in the paper on [arXiv](https://arxiv.org/abs/2511.09737). 
 I hope to build on this RL and generalization experience in my research on VLAs.
+
 
