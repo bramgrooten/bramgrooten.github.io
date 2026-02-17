@@ -14,3 +14,17 @@ strong, b {
   font-weight: 900 !important;
   text-shadow: 0px 0px 0.5px currentColor;
 }
+
+
+/* Blog Images: 90% on mobile, 80% on pc */
+.blog-img {
+  display: block;          
+  margin: 20px auto;       
+  width: 90%;           
+  height: auto;  
+}
+@media (min-width: 768px) {
+  .blog-img {
+    width: 80%;        /* Desktop override */
+  }
+}
