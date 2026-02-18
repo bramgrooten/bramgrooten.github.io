@@ -3,6 +3,18 @@
 
 @import "portfolYOU";
 
+/* Fix portfolYOU inline-block links that refuse to wrap across lines */
+.markdown-body a:not(.btn):not([class^="carousel-"]):not([class^="list-"]):not(.no-underline) {
+  display: inline;
+  text-decoration-color: transparent;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.15em;
+  text-underline-offset: 0.15em;
+  transition: text-decoration-color 0.35s;
+  &::after { display: none; }
+  &:hover { text-decoration-color: #007bff; }
+}
+
 .video-caption {
   text-align: center;
   font-size: 14px;
