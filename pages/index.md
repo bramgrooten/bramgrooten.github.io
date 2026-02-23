@@ -17,6 +17,8 @@ permalink: /
       Postdoc in Deep Learning at the TU Eindhoven
     </p>
 
+    {% include social.html %}
+
     <p class="text-muted">
       <a href="/assets/pdfs/CV_BramGrooten.pdf" target="_blank">CV.pdf</a>
     </p>
@@ -85,10 +87,10 @@ For my bachelor of Applied Mathematics, I started my studies at Wentworth Instit
     }
   })();
 
-  const totalImages = 4;
+  // To add some variety to the profile picture, we cycle through a set of images each time the page is loaded. 
+  const totalImages = 3;
   const storageKey = 'bramImageIndex';
   let currentIndex = sessionStorage.getItem(storageKey);
-
   if (!currentIndex) {
     currentIndex = 1;
   } else {
@@ -97,9 +99,7 @@ For my bachelor of Applied Mathematics, I started my studies at Wentworth Instit
       currentIndex = 1;
     }
   }
-
   sessionStorage.setItem(storageKey, currentIndex);
-
   if (currentIndex > 1) {
     const imgElement = document.getElementById('profile-pic');
     if (imgElement) {
