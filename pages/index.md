@@ -66,16 +66,25 @@ For my bachelor of Applied Mathematics, I started my studies at Wentworth Instit
 {% include about/timeline.html %}
 </div>
 
-## CV
+## Contact
 
-See [my CV here](/assets/pdfs/CV_BramGrooten.pdf). Last updated: Feb 2026.
-[Google Scholar](https://scholar.google.com/citations?user=zkYA_KEAAAAJ).
-
-
+<p id="contact-email" class="text-muted mb-0"></p>
+<p class="text-muted mb-0">See my <a href="/assets/pdfs/CV_BramGrooten.pdf">CV</a>. Last updated: Feb 2026.</p>
+<p class="text-muted mb-0">Here's my <a href="https://scholar.google.com/citations?user=zkYA_KEAAAAJ">Google Scholar</a> page.</p>
 
 
 
 <script>
+  (function() {
+    var u = 'b.grooten';
+    var d = 'tue.nl';
+    var el = document.getElementById('contact-email');
+    if (el) {
+      var a = u + '@' + d;
+      el.innerHTML = 'Email: <a href="mailto:' + a + '">' + a + '</a>';
+    }
+  })();
+
   const totalImages = 4;
   const storageKey = 'bramImageIndex';
   let currentIndex = sessionStorage.getItem(storageKey);
