@@ -29,6 +29,13 @@ permalink: /
 
 I'm a postdoc in the [AMOR/e](https://amore-labs.github.io/website/) lab at the **TU Eindhoven**, working with [Joaquin Vanschoren](https://joaquinvanschoren.github.io/home/) on vision-language-action models for robotics. In 2026, I am completing my PhD on generalization in deep reinforcement learning, supervised by [Decebal Mocanu](https://www.uni.lu/fstm-en/people/decebal-constantin-mocanu/) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/). Research interests include robotics, VLAs, RL, generalization, sparse neural networks.
 
+Here's my [PhD thesis](/assets/pdfs/phd_thesis_BramGrooten.pdf), to be defended on April 8th, 2026.
+<div class="col-md-7 col-10 mx-auto">
+  <a href="/assets/pdfs/phd_thesis_BramGrooten.pdf">
+    <img src="/assets/images/front_page.webp" alt="Cover of my PhD thesis, defense on April 8th, 2026.">
+  </a>
+</div>
+
 During my PhD, I did an internship at **Sony AI** in the [Gran Turismo](https://www.nature.com/articles/s41586-021-04357-7) team.
 We published a paper on large-scale generalization, accepted as an oral at AAAI 2026. Read the paper on [arXiv](https://arxiv.org/pdf/2511.09737)
 and see the presentation below.
