@@ -27,9 +27,9 @@ permalink: /
 </div>
 
 
-I'm a postdoc in the [AMOR/e](https://amore-labs.github.io/website/) lab at the **TU Eindhoven**, working with [Joaquin Vanschoren](https://joaquinvanschoren.github.io/home/) on vision-language-action models for robotics. In 2026, I am completing my PhD on generalization in deep reinforcement learning, supervised by [Decebal Mocanu](https://www.uni.lu/fstm-en/people/decebal-constantin-mocanu/) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/). Research interests include robotics, VLAs, RL, generalization, sparse neural networks.
+I'm a postdoc in the [AMOR/e](https://amore-labs.github.io/website/) lab at the **TU Eindhoven**, working with [Joaquin Vanschoren](https://joaquinvanschoren.github.io/home/) on vision-language-action models for robotics. In 2026, I completed my PhD on generalization in deep reinforcement learning, supervised by [Decebal Mocanu](https://www.uni.lu/fstm-en/people/decebal-constantin-mocanu/) and [Mykola Pechenizkiy](https://www.tue.nl/en/research/researchers/mykola-pechenizkiy/). Research interests include robotics, VLAs, RL, generalization, sparse neural networks.
 
-Here's my [PhD thesis](/assets/pdfs/phd_thesis_BramGrooten.pdf), to be defended on April 8th, 2026.
+Here's my [PhD thesis](/assets/pdfs/phd_thesis_BramGrooten.pdf), defended on April 8th, 2026.
 <div class="col-md-7 col-10 mx-auto">
   <a href="/assets/pdfs/phd_thesis_BramGrooten.pdf">
     <img src="/assets/images/front_page.webp" alt="Cover of my PhD thesis, defense on April 8th, 2026.">
