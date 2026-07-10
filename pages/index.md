@@ -78,7 +78,7 @@ For my bachelor of Applied Mathematics, I started my studies at Wentworth Instit
 ## Contact
 
 <p id="contact-email" class="text-muted mb-0"></p>
-<p class="text-muted mb-0">See my <a href="/assets/pdfs/CV_BramGrooten.pdf">CV</a>. Last updated: Jul 2026.</p>
+<p class="text-muted mb-0">See my <a href="/assets/pdfs/CV_BramGrooten.pdf">CV</a>. Last updated: July 2026.</p>
 <p class="text-muted mb-0">Here's my <a href="https://scholar.google.com/citations?user=zkYA_KEAAAAJ">Google Scholar</a> page.</p>
 
 
