@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Augmentation in VLA Post-Training</title>
+<meta name="description" content="How (and how not) to use data augmentation in RL post-training of vision-language-action models. NeurIPS 2026 RoboPAD workshop.">
+<meta property="og:title" content="How (and How Not) to Use Data Augmentation in VLA Post-Training">
+<meta property="og:description" content="Augment the critic, not the actor: +7.8 and +10.0 points out-of-distribution success on LIBERO-Plus for π0.5 and GR00T N1.5.">
+<meta property="og:image" content="static/images/teaser_a05.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --surface-2: #f3f1ed;
+  --ink: #1b1d21;
+  --ink-2: #4a4f57;
+  --ink-3: #767c85;
+  --rule: #e4e1db;
+  --accent: #2256c7;
+  --accent-soft: #e6edfb;
+  --bad: #c43a45;
+  --bad-soft: #fbe9ea;
+  /* chart series: identity follows the configuration, never the rank */
+  --s-none: #858b94;
+  --s-overlay: #2563d9;
+  --s-shift: #c46a00;
+  --s-naive: #d0404c;
+  --grid: #ebe8e3;
+  --shadow: 0 1px 2px rgba(20,20,30,.05), 0 4px 16px rgba(20,20,30,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131417; --surface: #1b1d21; --surface-2: #23262b;
+    --ink: #eceae6; --ink-2: #b9bcc2; --ink-3: #8b9098;
+    --rule: #2e3136; --accent: #7aa2ff; --accent-soft: #1f2a44;
+    --bad: #f07c85; --bad-soft: #3a2124;
+    --s-none: #9aa0a8; --s-overlay: #6f9dff; --s-shift: #f0a040; --s-naive: #f07c85;
+    --grid: #2a2d32; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131417; --surface: #1b1d21; --surface-2: #23262b;
+  --ink: #eceae6; --ink-2: #b9bcc2; --ink-3: #8b9098;
+  --rule: #2e3136; --accent: #7aa2ff; --accent-soft: #1f2a44;
+  --bad: #f07c85; --bad-soft: #3a2124;
+  --s-none: #9aa0a8; --s-overlay: #6f9dff; --s-shift: #f0a040; --s-naive: #f07c85;
+  --grid: #2a2d32; --shadow: none;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 17px/1.65 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+img, video { max-width: 100%; display: block; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 16px; }
+.narrow { max-width: 720px; margin-left: auto; margin-right: auto; }
+
+/* header */
+header.hero { padding: 64px 0 28px; text-align: center; }
+.venue {
+  display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--accent); background: var(--accent-soft);
+  padding: 4px 12px; border-radius: 999px; margin-bottom: 20px;
+}
+h1 {
+  font-family: "Source Serif 4", Georgia, serif; font-weight: 600;
+  font-size: clamp(30px, 5.2vw, 46px); line-height: 1.15; margin: 0 auto 22px;
+  max-width: 17em; letter-spacing: -.01em;
+}
+h1 em { font-style: italic; color: var(--bad); }
+.authors { font-size: 18px; margin: 0 0 4px; }
+.authors a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.authors a:hover { border-color: var(--ink); }
+.affil { color: var(--ink-3); font-size: 15px; margin: 0 0 24px; }
+.buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px;
+  border-radius: 999px; background: var(--ink); color: var(--bg);
+  font-size: 15px; font-weight: 500; text-decoration: none;
+}
+.btn:hover { opacity: .85; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+.btn svg { width: 16px; height: 16px; fill: currentColor; }
+.btn.soon { background: var(--surface-2); color: var(--ink-3); cursor: default; }
+.btn.soon:hover { opacity: 1; }
+.soon-tag {
+  font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 999px; background: var(--surface); color: var(--ink-3);
+  border: 1px solid var(--rule);
+}
+
+/* teaser */
+.teaser {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 16px;
+  box-shadow: var(--shadow); padding: 22px; margin: 16px 0 12px;
+  display: grid; grid-template-columns: 1.05fr 1fr; gap: 22px; align-items: center;
+}
+.obs-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.obs-row figure { margin: 0; }
+.obs-row img { width: 100%; border-radius: 8px; aspect-ratio: 204/190; object-fit: cover; }
+.obs-row figcaption { font-size: 13px; color: var(--ink-3); text-align: center; margin-top: 4px; }
+.caption { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; margin: 8px 0 0; }
+.caption b { color: var(--ink); }
+
+/* sections */
+section { padding: 44px 0 8px; }
+h2 {
+  font-family: "Source Serif 4", Georgia, serif; font-weight: 600;
+  font-size: 28px; margin: 0 0 14px; letter-spacing: -.005em;
+}
+h3 { font-size: 17px; font-weight: 600; margin: 26px 0 8px; }
+p { margin: 0 0 14px; }
+.tldr {
+  font-size: 19px; line-height: 1.55; border-left: 3px solid var(--accent);
+  padding: 4px 0 4px 18px; margin: 28px auto 0; color: var(--ink);
+}
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 620px; margin: 20px auto 6px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 14px;
+  padding: 16px 18px;
+}
+.stat .num { font-size: 34px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+.stat .num small { font-size: 18px; font-weight: 600; color: var(--ink-3); margin-left: 2px; }
+.stat .lbl { font-size: 14px; color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+
+/* placement diagram */
+.placement { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0 8px; }
+.pcard {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 12px;
+  padding: 14px 12px 12px; text-align: center; font-size: 14px;
+}
+.pcard .name { font-weight: 600; font-size: 15px; margin-bottom: 10px; }
+.pcard .mods { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; }
+.mod {
+  font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px;
+  border: 1px solid var(--rule); color: var(--ink-3); background: var(--surface-2);
+}
+.mod.aug { color: var(--s-overlay); border-color: currentColor; background: var(--accent-soft); }
+.pcard .res { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
+.pcard .res b { font-size: 16px; display: block; color: var(--ink); }
+.pcard.win { border: 2px solid var(--s-overlay); }
+.pcard.fail .res b { color: var(--bad); }
+.pcard .tag { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; }
+.pcard.win .tag { color: var(--s-overlay); background: var(--accent-soft); }
+.pcard.fail .tag { color: var(--bad); background: var(--bad-soft); }
+
+/* chart cards */
+.card {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 14px;
+  padding: 18px 18px 14px; margin: 18px 0; box-shadow: var(--shadow);
+}
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.card-title { font-weight: 600; font-size: 16px; margin: 0; }
+.card-sub { font-size: 13.5px; color: var(--ink-3); margin: 2px 0 0; }
+.legend { display: flex; gap: 6px 16px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-2); margin: 8px 0 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
+.legend i.dash { border-top-style: dashed; }
+.legend i.dot { width: 10px; height: 10px; border: 0; border-radius: 50%; }
+.chart { position: relative; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { fill: var(--ink-3); font: 500 12px Inter, system-ui, sans-serif; }
+.chart .axis-title { fill: var(--ink-2); font-size: 12.5px; }
+.chart .dlabel { font-weight: 600; font-size: 12.5px; fill: var(--ink-2); }
+.tip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--bg);
+  font-size: 13px; line-height: 1.45; padding: 7px 10px; border-radius: 8px;
+  white-space: nowrap; opacity: 0; transform: translate(-50%, calc(-100% - 12px));
+  transition: opacity .12s; z-index: 5;
+}
+.tip.on { opacity: 1; }
+.tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+/* segmented control */
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 999px; padding: 3px; }
+.seg button {
+  font: 500 13.5px Inter, system-ui, sans-serif; border: 0; background: transparent;
+  color: var(--ink-2); padding: 6px 14px; border-radius: 999px; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+/* axes gallery */
+.axes-grid { display: grid; grid-template-columns: 90px repeat(5, 1fr); gap: 8px; align-items: center; margin-top: 12px; }
+.axes-grid .h { font-size: 13.5px; font-weight: 600; text-align: center; color: var(--ink-2); }
+.axes-grid .r { font-size: 13px; color: var(--ink-3); text-align: right; padding-right: 4px; }
+.axes-grid img { width: 100%; border-radius: 8px; aspect-ratio: 1; object-fit: cover; }
+
+.pv { display: grid; grid-template-columns: 1fr 1fr 10px 1fr 1fr; gap: 8px; margin: 14px 0 4px; }
+.pv figure { margin: 0; }
+.pv img { border-radius: 8px; width: 100%; }
+.pv figcaption { font-size: 12.5px; color: var(--ink-3); text-align: center; margin-top: 4px; }
+
+/* videos */
+.vid-part { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin: 30px 0 2px; }
+.vid-block { margin-top: 14px; }
+.vid-block h3 { margin: 0 0 8px; font-size: 16px; }
+.vid-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.vid-pair figure { margin: 0; }
+.vid-pair video { width: 100%; border-radius: 10px; background: #000; aspect-ratio: 2/1; }
+.vid-pair figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 6px; }
+.vid-pair figcaption b { color: var(--ink); }
+.vid-note { font-size: 13.5px; color: var(--ink-3); margin-top: 10px; }
+
+/* rules */
+.rules { counter-reset: r; list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 12px; }
+.rules li {
+  counter-increment: r; background: var(--surface); border: 1px solid var(--rule);
+  border-radius: 14px; padding: 16px 18px 16px 64px; position: relative;
+}
+.rules li::before {
+  content: counter(r); position: absolute; left: 18px; top: 15px; width: 30px; height: 30px;
+  border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; display: grid; place-items: center; font-size: 15px;
+}
+.rules b { display: block; font-size: 17px; margin-bottom: 2px; }
+.rules p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
+
+/* tables */
+details.tbl { margin: 14px 0; border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); }
+details.tbl summary { cursor: pointer; padding: 12px 16px; font-weight: 500; font-size: 15px; }
+.tscroll { overflow-x: auto; padding: 0 12px 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+thead th { color: var(--ink-3); font-weight: 600; font-size: 12.5px; }
+tr.grp td { font-style: italic; color: var(--ink-3); border-bottom: 0; padding-top: 12px; }
+td.best { font-weight: 700; color: var(--ink); }
+td.col { color: var(--bad); }
+
+.eq { overflow-x: auto; overflow-y: hidden; margin: 4px 0 14px; font-size: 16px; }
+.katex { font-size: 1.05em; }
+pre.bib {
+  background: var(--surface-2); border-radius: 12px; padding: 16px 18px; overflow-x: auto;
+  font: 13.5px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); margin: 0;
+}
+.bib-wrap { position: relative; }
+.copy {
+  position: absolute; top: 10px; right: 10px; font: 500 12.5px Inter, sans-serif;
+  border: 1px solid var(--rule); background: var(--surface); color: var(--ink-2);
+  padding: 4px 10px; border-radius: 8px; cursor: pointer;
+}
+footer { color: var(--ink-3); font-size: 13.5px; text-align: center; padding: 48px 0 40px; }
+.theme-toggle {
+  position: fixed; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--rule); background: var(--surface); color: var(--ink-2);
+  cursor: pointer; display: grid; place-items: center; z-index: 10;
+}
+.theme-toggle svg { width: 18px; height: 18px; fill: currentColor; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 760px) {
+  body { font-size: 16px; }
+  header.hero { padding-top: 56px; }
+  .teaser { grid-template-columns: 1fr; padding: 14px; }
+  .stats { grid-template-columns: 1fr; }
+  .placement { grid-template-columns: 1fr 1fr; }
+  .axes-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .axes-grid .r, .axes-grid .corner { display: none; }
+  .axes-grid .h { font-size: 11px; }
+  .pv { grid-template-columns: 1fr 1fr; }
+  .pv .spacer { display: none; }
+  .vid-pair { grid-template-columns: 1fr; }
+  .rules li { padding-left: 58px; }
+}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}]});"></script>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeBtn" aria-label="Toggle dark mode">
+  <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+</button>
+
+<header class="hero wrap">
+  <div class="venue">NeurIPS 2026 · RoboPAD Workshop</div>
+  <h1>How (and How <em>Not</em>) to Use Data Augmentation in VLA Post-Training</h1>
+  <p class="authors">
+    <a href="https://bramgrooten.nl/">Bram Grooten</a> &nbsp;·&nbsp;
+    <a href="https://joaquinvanschoren.github.io/home/">Joaquin Vanschoren</a>
+  </p>
+  <p class="affil">TU Eindhoven</p>
+  <div class="buttons">
+    <!-- TODO: once posted, make this <a class="btn" href="ARXIV_URL"> and drop the soon tag -->
+    <span class="btn soon" aria-disabled="true" title="Coming soon">
+      <svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5zM8 12h8v1.6H8V12zm0 3.4h8V17H8v-1.6z"/></svg>
+      Paper <span class="soon-tag">coming soon</span>
+    </span>
+    <!-- TODO: once public, make this <a class="btn" href="GITHUB_URL"> and drop the soon tag -->
+    <span class="btn soon" aria-disabled="true" title="Coming soon">
+      <svg viewBox="0 0 24 24"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+      Code <span class="soon-tag">coming soon</span>
+    </span>
+    <a class="btn ghost" href="#videos">Videos</a>
+    <a class="btn ghost" href="#bibtex">BibTeX</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="teaser">
+    <div>
+      <div class="obs-row">
+        <figure><img src="static/images/teaser_clean.png" alt="Clean LIBERO observation of the robot workspace"><figcaption>clean</figcaption></figure>
+        <figure><img src="static/images/teaser_a025.png" alt="Observation blended with an ImageNet image at alpha 0.25"><figcaption>α = 0.25</figcaption></figure>
+        <figure><img src="static/images/teaser_a05.png" alt="Observation blended with an ImageNet image at alpha 0.5"><figcaption>α = 0.5</figcaption></figure>
+      </div>
+      <p class="caption">One LIBERO observation blended with a random ImageNet image at two strengths. The policy always acts on clean images; augmented images only enter the training update.</p>
+    </div>
+    <div>
+      <div class="legend" aria-hidden="true">
+        <span><i class="dash" style="border-color:var(--s-none)"></i>no augmentation</span>
+        <span><i style="border-color:var(--s-naive)"></i>naive</span>
+        <span><i style="border-color:var(--s-overlay)"></i>critic-only</span>
+      </div>
+      <div class="chart" id="teaserChart"></div>
+      <p class="caption"><b>π<sub>0.5</sub> on OOD sensor-noise during PPO post-training.</b> Naive augmentation destroys the policy within 100 epochs; critic-only augmentation improves it.</p>
+    </div>
+  </div>
+
+  <p class="tldr narrow">TLDR: <b>VLAs</b> improve their OOD generalization through image augmentation during RL post-training, when applied to the <b>critic only</b>.</p>
+
+  <section class="narrow" id="abstract">
+    <h2>Abstract</h2>
+    <p>Vision-language-action (VLA) models currently demonstrate strong performance in a wide range of real-world robotics tasks. However, they often still lack the generalization ability to handle large visual out-of-distribution shifts. Post-training of VLAs with reinforcement learning (RL) has been shown to benefit robustness, but significant room for improvement remains. In this work, we systematically study the effect of image augmentation on VLA post-training. We find that it is crucial to augment only the critic module during RL updates, while leaving the actor's input clean during both rollouts and updates. For π<sub>0.5</sub> and GR00T N1.5 this raises out-of-distribution success on LIBERO-Plus by 7.8 and 10.0 points respectively, while augmenting the actor collapses training entirely. We investigate a range of augmentation types and strengths, and provide practical recommendations for improving generalization in VLA post-training.</p>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="num">+7.8<small>pts</small></div><div class="lbl">OOD success for π<sub>0.5</sub> on LIBERO-Plus<br>73.9% → 81.7%, critic-only overlay</div></div>
+    <div class="stat"><div class="num">+10.0<small>pts</small></div><div class="lbl">OOD success for GR00T N1.5 on LIBERO-Plus<br>66.0% → 76.0%, critic-only shift</div></div>
+  </div>
+
+  <section class="narrow" id="setup">
+    <h2>Setup</h2>
+    <p>We post-train two VLAs with PPO in the <a href="https://github.com/RLinf/RLinf">RLinf</a> framework, starting from LIBERO-Spatial fine-tuned checkpoints: <b>π<sub>0.5</sub></b>, whose flow-matching action expert shares an attention stack with a PaliGemma VLM, and <b>GR00T N1.5</b>, whose diffusion-transformer head cross-attends to an Eagle VLM. A value head on the VLM's final features serves as the critic.</p>
+    <p>We train in-distribution on LIBERO-Spatial and measure out-of-distribution generalization on the <b>1662</b> visual tasks of <a href="https://arxiv.org/abs/2510.13626">LIBERO-Plus</a>, spread over five perturbation axes:</p>
+  </section>
+
+  <div class="axes-grid" role="group" aria-label="Five LIBERO-Plus perturbation axes">
+    <div class="corner"></div>
+    <div class="h">textures</div><div class="h">lighting</div><div class="h">layout</div><div class="h">camera</div><div class="h">sensor noise</div>
+    <div class="r">original</div>
+    <img src="static/images/env_roll20_ind_textures.png" alt="Original scene">
+    <img src="static/images/env_roll20_ind_lighting.png" alt="Original scene">
+    <img src="static/images/env_roll20_ind_layout.png" alt="Original scene">
+    <img src="static/images/env_roll20_ind_camera.png" alt="Original scene">
+    <img src="static/images/env_roll20_ind_noise.png" alt="Original scene">
+    <div class="r">perturbed</div>
+    <img src="static/images/env_roll20_ood_textures.png" alt="Scene with a different background texture">
+    <img src="static/images/env_roll20_ood_lighting.png" alt="Scene with different lighting">
+    <img src="static/images/env_roll20_ood_layout.png" alt="Scene with a changed object layout">
+    <img src="static/images/env_roll20_ood_camera.png" alt="Scene from a shifted camera viewpoint">
+    <img src="static/images/env_roll20_ood_noise.png" alt="Scene with sensor noise">
+  </div>
+
+  <section class="narrow">
+    <p>We use two augmentations in our experiments: <b>Random overlay</b> blends each observation with an ImageNet image, \(\tilde{o} = (1 - \alpha)\, o + \alpha\, m\), perturbing appearance. <b>Random shift</b> pads by 10 pixels and crops back to 224×224, perturbing framing. Augmentations are applied <em>only in the training forward pass</em>: rollouts and evaluations always see clean images.</p>
+  </section>
+
+  <div class="pv">
+    <figure><img src="static/images/policyview_roll20_main.png" alt="Clean base camera view"><figcaption>base camera</figcaption></figure>
+    <figure><img src="static/images/policyview_roll20_wrist.png" alt="Clean wrist camera view"><figcaption>wrist camera</figcaption></figure>
+    <div class="spacer"></div>
+    <figure><img src="static/images/policyview_roll20_aug_main.png" alt="Base camera view with overlay augmentation"><figcaption>base, overlay α = 0.5</figcaption></figure>
+    <figure><img src="static/images/policyview_roll20_aug_wrist.png" alt="Wrist camera view with overlay augmentation"><figcaption>wrist, overlay α = 0.5</figcaption></figure>
+  </div>
+
+  <section class="narrow" id="placement">
+    <h2>1. Where to augment: the critic, not the actor</h2>
+    <p>In visual RL with small CNNs, prior work found that augmenting <em>both</em> actor and critic works well. For VLAs we find the opposite. Whenever the actor receives augmented observations, PPO clips an overly large fraction of the updates and training collapses to near-zero success. Augmenting only the critic keeps training stable, and improves both in-distribution and out-of-distribution success on π<sub>0.5</sub>.</p>
+  </section>
+
+  <div class="placement" aria-label="Results per augmentation placement for pi 0.5">
+    <div class="pcard">
+      <div class="name">no augm.</div>
+      <div class="mods"><span class="mod">actor</span><span class="mod">critic</span></div>
+      <div class="res"><b>73.9%</b>OOD success</div>
+    </div>
+    <div class="pcard fail">
+      <div class="name">actor + critic</div>
+      <div class="mods"><span class="mod aug">actor</span><span class="mod aug">critic</span></div>
+      <div class="res"><b>0.1%</b>OOD success</div>
+      <span class="tag">collapses</span>
+    </div>
+    <div class="pcard fail">
+      <div class="name">actor-only</div>
+      <div class="mods"><span class="mod aug">actor</span><span class="mod">critic</span></div>
+      <div class="res"><b>4.3%</b>OOD success</div>
+      <span class="tag">collapses</span>
+    </div>
+    <div class="pcard win">
+      <div class="name">critic-only</div>
+      <div class="mods"><span class="mod">actor</span><span class="mod aug">critic</span></div>
+      <div class="res"><b>81.7%</b>OOD success</div>
+      <span class="tag">best</span>
+    </div>
+  </div>
+  <p class="caption" style="text-align:center">π<sub>0.5</sub> after PPO post-training with overlay augmentation (α = 0.5).</p>
+
+  <section class="narrow">
+    <p>Why does critic-only augmentation help the actor at all? The VLM backbone is frozen in our runs, so the actor never sees an augmented pixel. It is shaped entirely through the advantage estimates. Writing \(\tilde{V}\) for a critic trained on augmented observations, the temporal-difference residual and the generalized advantage estimate the actor is trained on are</p>
+    <div class="eq">\[
+      \tilde{\delta}_t = r_t + \gamma \tilde{V}(s_{t+1}) - \tilde{V}(s_t),
+      \qquad
+      \tilde{A}_t = \sum_{l \geq 0} (\gamma \lambda)^l\, \tilde{\delta}_{t+l},
+    \]</div>
+    <p>and the policy gradient is \(\mathbb{E}\big[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\, \tilde{A}_t\big]\). A critic that scores a perturbed observation the way it scores the clean one yields more robust advantages, and those advantages are the signal the actor learns from.</p>
+  </section>
+
+  <section class="narrow" id="type">
+    <h2>2. What to augment with</h2>
+    <p>Both augmentation types help, but neither is uniformly better. Each one transfers best to the perturbation it resembles: <b>overlay</b> helps most on <em>sensor noise</em>, and <b>shift</b> on <em>camera viewpoints</em> and <em>layout</em>. The ranking flips between models because their headroom differs: π<sub>0.5</sub> is weakest on sensor noise, while GR00T N1.5 is weakest on camera viewpoints.</p>
+  </section>
+
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <p class="card-title">OOD success per LIBERO-Plus axis, critic-only augmentation</p>
+        <p class="card-sub">Each row compares the baseline with both augmentation types. Hover a dot for its value.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Model">
+        <button type="button" data-model="pi05" aria-pressed="true">π<sub>0.5</sub></button>
+        <button type="button" data-model="gr00t" aria-pressed="false">GR00T N1.5</button>
+      </div>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span><i class="dot" style="background:var(--s-none)"></i>no augmentation</span>
+      <span><i class="dot" style="background:var(--s-overlay)"></i>overlay (α = 0.5)</span>
+      <span><i class="dot" style="background:var(--s-shift)"></i>shift (10 px)</span>
+    </div>
+    <div class="chart" id="axisChart"></div>
+  </div>
+
+  <section class="narrow" id="strength">
+    <h2>3. Augmentation strength</h2>
+    <p>Sweeping the overlay strength α on π<sub>0.5</sub>, OOD success peaks at α = 0.5. The curve is flat enough that every value from 0.1 to 0.9 still beats the unaugmented baseline, even at α = 0.9, where the observation is mostly ImageNet.</p>
+  </section>
+
+  <div class="card">
+    <p class="card-title">Average OOD success vs. overlay strength α</p>
+    <p class="card-sub">π<sub>0.5</sub>, critic-only overlay augmentation. The dashed line is the unaugmented baseline.</p>
+    <div class="chart" id="alphaChart" style="margin-top:8px"></div>
+  </div>
+
+  <section class="narrow" id="rules">
+    <h2>Rules of thumb</h2>
+    <p>For practitioners post-training a VLA with PPO who want better out-of-distribution robustness from data augmentation:</p>
+    <ol class="rules">
+      <li><b>Augment the critic, not the actor.</b><p>This is the one choice that has to be right. Augmented actor inputs drive success to zero on both VLAs, while every critic-only run we tried trains stably.</p></li>
+      <li><b>Match the augmentation to your model's weakest axis.</b><p>Overlay perturbs appearance and helps most against sensor noise; shift perturbs framing and helps most against camera and layout changes. Combining both was worse than the better one alone.</p></li>
+      <li><b>Keep the augmentation strength moderate.</b><p>α ≈ 0.5 was best for overlay, but every strength from 0.1 to 0.9 beat no augmentation.</p></li>
+    </ol>
+  </section>
+
+  <section id="videos">
+    <div class="narrow">
+      <h2>Videos</h2>
+      <p>Showing our best π<sub>0.5</sub> policy on LIBERO-Spatial and on each out-of-distribution category. Clips show the base camera (left) and the wrist camera (right).</p>
+    </div>
+    <div id="vidList"></div>
+  </section>
+
+  <section id="results">
+    <div class="narrow"><h2>Full results</h2>
+    <p>Success rates (%) after 300 epochs of PPO on LIBERO-Spatial. IND is the training suite (500 episodes); the OOD columns are the five visual LIBERO-Plus axes, and Avg is their unweighted mean.</p></div>
+    <details class="tbl" open>
+      <summary>Augmentation placement (overlay, α = 0.5)</summary>
+      <div class="tscroll"><table id="tPlacement"></table></div>
+    </details>
+    <details class="tbl">
+      <summary>Augmentation type (critic-only)</summary>
+      <div class="tscroll"><table id="tType"></table></div>
+    </details>
+    <details class="tbl">
+      <summary>Overlay strength α (π<sub>0.5</sub>, critic-only)</summary>
+      <div class="tscroll"><table id="tStrength"></table></div>
+    </details>
+    <p class="caption narrow">† Collapsed runs were stopped early and are reported at epoch 100. Each configuration is one training run, evaluated once on every one of the 1662 LIBERO-Plus tasks.</p>
+  </section>
+
+  <section class="narrow" id="bibtex">
+    <h2>BibTeX</h2>
+    <div class="bib-wrap">
+      <button class="copy" type="button" id="copyBib">Copy</button>
+<pre class="bib" id="bib">@inproceedings{grooten2026augmentation,
+  title     = {{How (and How Not) to Use Data Augmentation
+               in VLA Post-Training}},
+  author    = {Grooten, Bram and Vanschoren, Joaquin},
+  booktitle = {NeurIPS Workshop on Post-Training Adaptation
+               of Robot Foundation Models (RoboPAD)},
+  year      = {2026}
+}</pre>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <a href="https://bramgrooten.nl/">bramgrooten.nl</a> · Built on <a href="https://github.com/RLinf/RLinf">RLinf</a> and <a href="https://github.com/sylvestf/LIBERO-plus">LIBERO-Plus</a>
+</footer>
+
+<script>
+(function () {
+  // ---------- theme ----------
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem("vla-augm-theme"); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme") === "dark" ||
+      (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("vla-augm-theme", next); } catch (e) {}
+  });
+
+  document.getElementById("copyBib").addEventListener("click", function () {
+    var btn = this;
+    var text = document.getElementById("bib").textContent;
+    var done = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy"; }, 1400); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {});
+  });
+
+  // ---------- data (from the paper's tables) ----------
+  var AXES = ["textures", "lighting", "layout", "camera", "sensor noise", "average"];
+  var DATA = {
+    pi05: {
+      none:    [95.0, 95.9, 92.2, 45.7, 40.7, 73.9],
+      overlay: [95.8, 96.9, 93.0, 55.1, 67.8, 81.7],
+      shift:   [95.0, 95.2, 92.2, 57.7, 54.4, 78.9]
+    },
+    gr00t: {
+      none:    [90.4, 87.7, 62.3, 39.4, 50.4, 66.0],
+      overlay: [87.3, 88.0, 61.6, 34.0, 59.3, 66.0],
+      shift:   [93.1, 92.5, 77.1, 58.8, 58.4, 76.0]
+    }
+  };
+  var SERIES = [
+    { key: "none", label: "no augmentation", color: "var(--s-none)" },
+    { key: "overlay", label: "overlay", color: "var(--s-overlay)" },
+    { key: "shift", label: "shift", color: "var(--s-shift)" }
+  ];
+  var EPOCHS = [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300];
+  var TEASER = [
+    { label: "no augmentation", color: "var(--s-none)", dash: "5 4", marker: "square",
+      y: [28.77, 31.34, 30.20, 29.63, 33.33, 31.34, 42.45, 56.13, 51.00, 41.88, 41.88, 40.74] },
+    { label: "naive", color: "var(--s-naive)", marker: "triangle",
+      y: [20.23, 2.28, 25.36, 4.84, 1.71, 0.57, 0, 0, 0, 0, 0, 0.28] },
+    { label: "critic-only", color: "var(--s-overlay)", marker: "circle", width: 2.5,
+      y: [25.93, 39.32, 32.48, 36.47, 35.33, 33.05, 38.46, 51.57, 56.98, 55.84, 57.83, 67.81] }
+  ];
+
+  // ---------- svg helpers ----------
+  var NS = "http://www.w3.org/2000/svg";
+  function el(name, attrs, parent) {
+    var n = document.createElementNS(NS, name);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function text(parent, x, y, s, attrs) {
+    var t = el("text", Object.assign({ x: x, y: y }, attrs || {}), parent);
+    t.textContent = s; return t;
+  }
+  function makeTip(host) {
+    var tip = document.createElement("div"); tip.className = "tip"; host.appendChild(tip);
+    return {
+      show: function (x, y, html) { tip.innerHTML = html; tip.style.left = x + "px"; tip.style.top = y + "px"; tip.classList.add("on"); },
+      hide: function () { tip.classList.remove("on"); }
+    };
+  }
+  function marker(g, kind, x, y, color, r) {
+    var ring = "var(--surface)";
+    if (kind === "square") return el("rect", { x: x - r, y: y - r, width: 2 * r, height: 2 * r, rx: 1.5, fill: color, stroke: ring, "stroke-width": 2 }, g);
+    if (kind === "triangle") return el("path", { d: "M" + x + "," + (y - r * 1.25) + " L" + (x + r * 1.15) + "," + (y + r * .85) + " L" + (x - r * 1.15) + "," + (y + r * .85) + "Z", fill: color, stroke: ring, "stroke-width": 2, "stroke-linejoin": "round" }, g);
+    return el("circle", { cx: x, cy: y, r: r, fill: color, stroke: ring, "stroke-width": 2 }, g);
+  }
+
+  // ---------- teaser line chart ----------
+  function teaserChart() {
+    var host = document.getElementById("teaserChart");
+    var W = 420, H = 250, m = { l: 40, r: 76, t: 10, b: 36 };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Sensor-noise OOD success over 300 training epochs. Critic-only rises to 68 percent, no augmentation ends at 41 percent, naive augmentation collapses to 0." }, host);
+    var x = function (e) { return m.l + (e / 300) * (W - m.l - m.r); };
+    var y = function (v) { return H - m.b - (v / 75) * (H - m.t - m.b); };
+    [0, 25, 50, 75].forEach(function (v) {
+      el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: "var(--grid)", "stroke-width": 1 }, svg);
+      text(svg, m.l - 8, y(v) + 4, v, { "text-anchor": "end" });
+    });
+    [0, 100, 200, 300].forEach(function (e) { text(svg, x(e), H - m.b + 18, e, { "text-anchor": "middle" }); });
+    text(svg, (m.l + W - m.r) / 2, H - 2, "training epoch", { "text-anchor": "middle", class: "axis-title" });
+    text(svg, 12, m.t + (H - m.t - m.b) / 2, "OOD success (%)", { "text-anchor": "middle", class: "axis-title", transform: "rotate(-90 12 " + (m.t + (H - m.t - m.b) / 2) + ")" });
+
+    TEASER.forEach(function (s) {
+      var d = s.y.map(function (v, i) { return (i ? "L" : "M") + x(EPOCHS[i]) + "," + y(v); }).join(" ");
+      el("path", { d: d, fill: "none", stroke: s.color, "stroke-width": s.width || 2, "stroke-dasharray": s.dash || "none", "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+      s.y.forEach(function (v, i) { marker(svg, s.marker, x(EPOCHS[i]), y(v), s.color, 3.6); });
+    });
+    // direct labels at line ends, nudged apart
+    var ends = [{ t: "critic-only", v: 67.81 }, { t: "no augm.", v: 40.74 }, { t: "naive", v: 0.28 }];
+    ends.forEach(function (e) { text(svg, W - m.r + 10, y(e.v) + 4, e.t, { class: "dlabel" }); });
+
+    // crosshair + tooltip
+    var tip = makeTip(host);
+    var cross = el("line", { y1: m.t, y2: H - m.b, stroke: "var(--ink-3)", "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0 }, svg);
+    var hit = el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent" }, svg);
+    function move(ev) {
+      var r = svg.getBoundingClientRect();
+      var px = (ev.clientX - r.left) * W / r.width;
+      var i = Math.round(((px - m.l) / (W - m.l - m.r)) * 300 / 25) - 1;
+      i = Math.max(0, Math.min(EPOCHS.length - 1, i));
+      cross.setAttribute("x1", x(EPOCHS[i])); cross.setAttribute("x2", x(EPOCHS[i])); cross.setAttribute("opacity", 1);
+      var rows = TEASER.slice().sort(function (a, b) { return b.y[i] - a.y[i]; }).map(function (s) {
+        return '<span class="sw" style="background:' + s.color + '"></span>' + s.label + ": " + s.y[i].toFixed(1) + "%";
+      }).join("<br>");
+      tip.show(x(EPOCHS[i]) * r.width / W, m.t * r.height / H + 8, "<b>epoch " + EPOCHS[i] + "</b><br>" + rows);
+    }
+    hit.addEventListener("pointermove", move);
+    hit.addEventListener("pointerleave", function () { tip.hide(); cross.setAttribute("opacity", 0); });
+  }
+
+  // ---------- per-axis dot plot ----------
+  function axisChart(model) {
+    var host = document.getElementById("axisChart");
+    host.innerHTML = "";
+    var W = Math.max(300, host.clientWidth || 820), rowH = 40, m = { l: 100, r: 16, t: 8, b: 40 };
+    var narrow = W < 560;
+    var H = m.t + rowH * AXES.length + m.b + 8;
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "OOD success per axis for " + (model === "pi05" ? "pi 0.5" : "GR00T N1.5") }, host);
+    var x = function (v) { return m.l + ((v - 30) / 70) * (W - m.l - m.r); };
+    var tip = makeTip(host);
+    (narrow ? [30, 50, 70, 90] : [30, 40, 50, 60, 70, 80, 90, 100]).forEach(function (v) {
+      el("line", { x1: x(v), x2: x(v), y1: m.t, y2: H - m.b, stroke: "var(--grid)", "stroke-width": 1 }, svg);
+      text(svg, x(v), H - m.b + 18, v, { "text-anchor": "middle" });
+    });
+    text(svg, (m.l + W - m.r) / 2, H - 4, "OOD success (%)", { "text-anchor": "middle", class: "axis-title" });
+    var d = DATA[model];
+    AXES.forEach(function (a, i) {
+      var cy = m.t + rowH * i + rowH / 2 + (i === AXES.length - 1 ? 8 : 0);
+      if (i === AXES.length - 1) el("line", { x1: 8, x2: W - m.r, y1: cy - rowH / 2 - 2, y2: cy - rowH / 2 - 2, stroke: "var(--rule)" }, svg);
+      text(svg, m.l - 14, cy + 4, a, { "text-anchor": "end", style: i === AXES.length - 1 ? "font-weight:700;fill:var(--ink)" : "fill:var(--ink-2)" });
+      var vals = SERIES.map(function (s) { return d[s.key][i]; });
+      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+      el("line", { x1: x(lo), x2: x(hi), y1: cy, y2: cy, stroke: "var(--ink-3)", "stroke-width": 2, opacity: .35, "stroke-linecap": "round" }, svg);
+      SERIES.forEach(function (s, k) {
+        var v = d[s.key][i];
+        var jitter = (k - 1) * 6; // small vertical offset so near-equal values stay visible
+        var c = el("circle", { cx: x(v), cy: cy + jitter, r: 6, fill: s.color, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+        var hitc = el("circle", { cx: x(v), cy: cy + jitter, r: 10, fill: "transparent", style: "cursor:default" }, svg);
+        var delta = s.key === "none" ? "" : " (" + (v - d.none[i] >= 0 ? "+" : "−") + Math.abs(v - d.none[i]).toFixed(1) + ")";
+        hitc.addEventListener("pointerenter", function () {
+          var r = svg.getBoundingClientRect();
+          c.setAttribute("r", 7.5);
+          tip.show(x(v) * r.width / W, (cy + jitter) * r.height / H - 4, "<b>" + a + "</b><br><span class=\"sw\" style=\"background:" + s.color + "\"></span>" + s.label + ": " + v.toFixed(1) + "%" + delta);
+        });
+        hitc.addEventListener("pointerleave", function () { c.setAttribute("r", 6); tip.hide(); });
+      });
+    });
+  }
+
+  // ---------- alpha sweep ----------
+  function alphaChart() {
+    var host = document.getElementById("alphaChart");
+    var A = [0.10, 0.25, 0.50, 0.75, 0.90], V = [77.0, 77.0, 81.7, 80.6, 76.6], BASE = 73.9;
+    host.innerHTML = "";
+    var W = Math.max(300, host.clientWidth || 820), H = 250, m = { l: 48, r: W < 560 ? 88 : 110, t: 14, b: 40 };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Average OOD success versus overlay strength: peaks at 81.7 percent at alpha 0.5; all values exceed the 73.9 percent baseline." }, host);
+    var x = function (a) { return m.l + (a / 1) * (W - m.l - m.r); };
+    var y = function (v) { return H - m.b - ((v - 70) / 14) * (H - m.t - m.b); };
+    [70, 74, 78, 82].forEach(function (v) {
+      el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: "var(--grid)" }, svg);
+      text(svg, m.l - 8, y(v) + 4, v, { "text-anchor": "end" });
+    });
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (a) { text(svg, x(a), H - m.b + 18, a, { "text-anchor": "middle" }); });
+    text(svg, (m.l + W - m.r) / 2, H - 4, "overlay strength α", { "text-anchor": "middle", class: "axis-title" });
+    text(svg, 14, m.t + (H - m.t - m.b) / 2, "avg OOD success (%)", { "text-anchor": "middle", class: "axis-title", transform: "rotate(-90 14 " + (m.t + (H - m.t - m.b) / 2) + ")" });
+    el("line", { x1: m.l, x2: W - m.r, y1: y(BASE), y2: y(BASE), stroke: "var(--s-none)", "stroke-width": 2, "stroke-dasharray": "5 4" }, svg);
+    text(svg, W - m.r + 10, y(BASE) + 4, "no augm.", { class: "dlabel" });
+    el("path", { d: A.map(function (a, i) { return (i ? "L" : "M") + x(a) + "," + y(V[i]); }).join(" "), fill: "none", stroke: "var(--s-overlay)", "stroke-width": 2.5, "stroke-linejoin": "round" }, svg);
+    var tip = makeTip(host);
+    A.forEach(function (a, i) {
+      var c = marker(svg, "circle", x(a), y(V[i]), "var(--s-overlay)", 5.5);
+      if (i === 2) text(svg, x(a), y(V[i]) - 12, "81.7", { "text-anchor": "middle", class: "dlabel" });
+      var h = el("circle", { cx: x(a), cy: y(V[i]), r: 16, fill: "transparent" }, svg);
+      h.addEventListener("pointerenter", function () {
+        var r = svg.getBoundingClientRect(); c.setAttribute("r", 7);
+        tip.show(x(a) * r.width / W, y(V[i]) * r.height / H - 6, "<b>α = " + a.toFixed(2) + "</b><br>" + V[i].toFixed(1) + "% (+" + (V[i] - BASE).toFixed(1) + " vs. baseline)");
+      });
+      h.addEventListener("pointerleave", function () { c.setAttribute("r", 5.5); tip.hide(); });
+    });
+    text(svg, W - m.r + 10, y(V[4]) + 4, "critic-only", { class: "dlabel" });
+  }
+
+  // ---------- tables ----------
+  var HEAD = ["", "IND", "Tex.", "Light", "Layout", "Cam.", "Noise", "Avg"];
+  function table(id, head, groups) {
+    var t = document.getElementById(id);
+    var h = "<thead><tr>" + head.map(function (c) { return "<th>" + c + "</th>"; }).join("") + "</tr></thead><tbody>";
+    groups.forEach(function (g) {
+      if (g.name) h += '<tr class="grp"><td colspan="' + head.length + '">' + g.name + "</td></tr>";
+      var ncol = g.rows[0].length - 1;
+      var best = [];
+      for (var c = 0; c < ncol; c++) best[c] = Math.max.apply(null, g.rows.filter(function (r) { return !r.skipBest; }).map(function (r) { return r[c + 1]; }).filter(function (v) { return typeof v === "number"; }));
+      g.rows.forEach(function (r) {
+        h += "<tr>" + r.map(function (v, c) {
+          if (c === 0) return "<td>" + v + "</td>";
+          if (typeof v !== "number") return "<td>" + v + "</td>";
+          var cls = r.collapsed ? "col" : (!r.skipBest && v === best[c - 1] ? "best" : "");
+          return '<td class="' + cls + '">' + v.toFixed(1) + "</td>";
+        }).join("") + "</tr>";
+      });
+    });
+    t.innerHTML = h + "</tbody>";
+  }
+  function row(a, flags) { return Object.assign(a, flags || {}); }
+  table("tPlacement", ["Augmented modules", "IND", "Tex.", "Light", "Layout", "Cam.", "Noise", "Avg"], [
+    { name: "π<sub>0.5</sub>", rows: [
+      row(["SFT checkpoint (no RL)", 78.8, 89.2, 83.6, 80.8, 17.0, 12.8, 56.7], { skipBest: true }),
+      row(["no augm. (baseline)", 93.2, 95.0, 95.9, 92.2, 45.7, 40.7, 73.9]),
+      row(["actor + critic", 0.8, 0.0, 0.0, 0.0, 0.0, 0.3, 0.1], { collapsed: true }),
+      row(["actor-only†", 11.0, 6.2, 3.8, 6.5, 1.6, 3.7, 4.3], { collapsed: true }),
+      row(["critic-only", 98.0, 95.8, 96.9, 93.0, 55.1, 67.8, 81.7])
+    ]},
+    { name: "GR00T N1.5", rows: [
+      row(["SFT checkpoint (no RL)", 42.0, 41.2, 31.5, 24.2, 14.6, 23.4, 27.0], { skipBest: true }),
+      row(["no augm. (baseline)", 95.4, 90.4, 87.7, 62.3, 39.4, 50.4, 66.0]),
+      row(["actor + critic†", 0.2, 0.0, 0.0, 0.3, 0.3, 0.0, 0.1], { collapsed: true }),
+      row(["actor-only†", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], { collapsed: true }),
+      row(["critic-only", 97.4, 87.3, 88.0, 61.6, 34.0, 59.3, 66.0])
+    ]}
+  ]);
+  table("tType", HEAD, [
+    { name: "π<sub>0.5</sub>", rows: [
+      ["no augmentation", 93.2, 95.0, 95.9, 92.2, 45.7, 40.7, 73.9],
+      ["overlay (α = 0.5)", 98.0, 95.8, 96.9, 93.0, 55.1, 67.8, 81.7],
+      ["shift (10 px)", 95.8, 95.0, 95.2, 92.2, 57.7, 54.4, 78.9],
+      ["overlay + shift", 93.6, 96.5, 93.8, 91.4, 48.4, 49.3, 75.9]
+    ]},
+    { name: "GR00T N1.5", rows: [
+      ["no augmentation", 95.4, 90.4, 87.7, 62.3, 39.4, 50.4, 66.0],
+      ["overlay (α = 0.5)", 97.4, 87.3, 88.0, 61.6, 34.0, 59.3, 66.0],
+      ["shift (10 px)", 96.4, 93.1, 92.5, 77.1, 58.8, 58.4, 76.0],
+      ["overlay + shift", 95.4, 87.7, 91.4, 67.5, 42.3, 55.8, 69.0]
+    ]}
+  ]);
+  table("tStrength", HEAD, [
+    { rows: [
+      ["no augmentation", 93.2, 95.0, 95.9, 92.2, 45.7, 40.7, 73.9],
+      ["α = 0.10", 96.0, 94.6, 94.2, 92.7, 50.5, 53.0, 77.0],
+      ["α = 0.25", 93.8, 95.8, 90.1, 91.4, 52.4, 55.6, 77.0],
+      ["α = 0.50", 98.0, 95.8, 96.9, 93.0, 55.1, 67.8, 81.7],
+      ["α = 0.75", 94.8, 95.4, 95.9, 91.4, 59.8, 60.4, 80.6],
+      ["α = 0.90", 93.2, 94.6, 93.5, 91.9, 51.3, 51.6, 76.6]
+    ]}
+  ]);
+
+  // ---------- videos ----------
+  var V = "static/videos/";
+  // two clips per category; file names encode base task, LIBERO-Plus task id and outcome
+  var CLIPS = [
+    { axis: "In-distribution", clips: ["IND_base1_ok.mp4", "IND_base4_ok.mp4"] },
+    { axis: "Textures", clips: ["OOD_textures_base1_task0062_ok.mp4", "OOD_textures_base9_task0257_ok.mp4"] },
+    { axis: "Lighting", clips: ["OOD_lighting_base0_task2117_ok.mp4", "OOD_lighting_base3_task2273_ok.mp4"] },
+    { axis: "Layout", clips: ["OOD_layout_base0_task1728_ok.mp4", "OOD_layout_base0_task1729_ok.mp4"] },
+    { axis: "Camera", clips: ["OOD_camera_base6_task0725_ok.mp4", "OOD_camera_base6_task0729_fail.mp4"] },
+    { axis: "Sensor noise", clips: ["OOD_noise_base5_task1426_ok.mp4", "OOD_noise_base2_task1517_fail.mp4"] }
+  ];
+  function describe(file) {
+    var base = /base(\d+)/.exec(file)[1], task = /task(\d+)/.exec(file);
+    var ok = /_ok\./.test(file);
+    return '<b style="color:' + (ok ? "var(--ink)" : "var(--bad)") + '">' + (ok ? "Success" : "Failure") + "</b> · " +
+      "LIBERO-Spatial task " + base + (task ? ", LIBERO-Plus #" + parseInt(task[1], 10) : "");
+  }
+  // every category on the page; a clip only loads and plays while it is on screen
+  var list = document.getElementById("vidList");
+  var NAMES = { "Textures": "Background textures", "Lighting": "Light conditions", "Layout": "Objects layout", "Camera": "Camera viewpoints", "Sensor noise": "Sensor noise" };
+  var io = "IntersectionObserver" in window ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting) {
+        if (!v.getAttribute("src")) v.src = v.dataset.src;
+        var p = v.play(); if (p) p.catch(function () {});
+      } else if (!v.paused) v.pause();
+    });
+  }, { rootMargin: "200px 0px" }) : null;
+  CLIPS.forEach(function (c, i) {
+    if (i === 0 || i === 1) {
+      var part = document.createElement("div"); part.className = "vid-part";
+      part.textContent = i === 0 ? "In-distribution · LIBERO-Spatial" : "Out-of-distribution · LIBERO-Plus";
+      list.appendChild(part);
+    }
+    var block = document.createElement("div"); block.className = "vid-block";
+    block.innerHTML = (i === 0 ? "" : "<h3>" + NAMES[c.axis] + "</h3>") + '<div class="vid-pair"></div>';
+    var pair = block.lastChild;
+    c.clips.forEach(function (f) {
+      var fig = document.createElement("figure");
+      var v = document.createElement("video");
+      v.muted = true; v.loop = true; v.playsInline = true; v.preload = "none";
+      v.setAttribute("muted", ""); v.setAttribute("playsinline", "");
+      v.dataset.src = V + f;
+      if (io) io.observe(v); else { v.src = v.dataset.src; v.autoplay = true; }
+      var cap = document.createElement("figcaption"); cap.innerHTML = describe(f);
+      fig.appendChild(v); fig.appendChild(cap); pair.appendChild(fig);
+    });
+    list.appendChild(block);
+  });
+
+  // ---------- init ----------
+  teaserChart();
+  var currentModel = "pi05";
+  axisChart(currentModel);
+  alphaChart();
+  var lastW = window.innerWidth, rt;
+  window.addEventListener("resize", function () {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth; clearTimeout(rt);
+    rt = setTimeout(function () { axisChart(currentModel); alphaChart(); }, 120);
+  });
+  document.querySelectorAll(".seg button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll(".seg button").forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+      currentModel = b.dataset.model; axisChart(currentModel);
+    });
+  });
+})();
+</script>
+</body>
+</html>
