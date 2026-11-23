@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools Quiz · Gereedschap oefenen</title>
+<meta name="description" content="Practice the English and Dutch names of the 70 tools at the TU/e Innovation Space workshop. Multiple choice, typing and flashcards.">
+<meta property="og:title" content="Tools Quiz · Gereedschap oefenen">
+<meta property="og:description" content="Learn the names of the TU/e Innovation Space tools in English and Dutch.">
+<meta property="og:image" content="img/geisoleerde-tangen-set.jpg">
+<meta name="theme-color" content="#58cc02">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --green:#58cc02;--green-d:#58a700;--green-l:#d7ffb8;--green-b:#a5ed6e;
+  --red:#ff4b4b;--red-d:#ea2b2b;--red-l:#ffdfe0;--red-b:#ffb2b2;
+  --blue:#1cb0f6;--blue-d:#1899d6;--blue-l:#ddf4ff;--blue-b:#84d8ff;
+  --orange:#ff9600;--gold:#ffc800;
+  --gray:#e5e5e5;--gray-d:#afafaf;--ink:#4b4b4b;--ink-2:#3c3c3c;--muted:#777;
+}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:#fff}
+body{font-family:Nunito,"Segoe UI",system-ui,-apple-system,sans-serif;font-weight:700;color:var(--ink);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;-webkit-tap-highlight-color:transparent}
+.app{max-width:640px;margin:0 auto;padding:16px 16px 8px}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.progress{flex:1;height:16px;background:var(--gray);border-radius:99px;overflow:hidden}
+.progress>div{height:100%;width:0;background:var(--green);border-radius:99px;position:relative;transition:width .45s cubic-bezier(.3,1.4,.6,1)}
+.progress>div::after{content:"";position:absolute;left:8px;right:8px;top:4px;height:4px;border-radius:99px;background:rgba(255,255,255,.3)}
+.pill{display:flex;align-items:center;gap:4px;font-weight:900;font-size:17px;white-space:nowrap}
+.pill[hidden]{display:none}
+.pill svg{width:22px;height:22px;flex:none}
+.pill.pct{color:var(--green)}.pill.pct.mid{color:var(--orange)}.pill.pct.low{color:var(--red)}
+.pill.streak{color:var(--gray-d)}.pill.streak.on{color:var(--orange)}
+.pill.bump{animation:bump .35s}
+@keyframes bump{40%{transform:scale(1.25)}}
+
+/* question */
+.q{font-size:clamp(22px,5.5vw,28px);font-weight:800;color:var(--ink-2);margin:0 0 14px;line-height:1.2}
+.pic{border:2px solid var(--gray);border-radius:16px;aspect-ratio:3/2;max-height:34vh;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff}
+.pic img{width:100%;height:100%;object-fit:contain;display:block}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:340px){.opts{grid-template-columns:1fr}}
+.opt{display:flex;align-items:center;gap:10px;text-align:left;min-height:60px;padding:10px 14px;background:#fff;border:2px solid var(--gray);border-bottom-width:4px;border-radius:16px;font-size:17px;font-weight:700;color:var(--ink);cursor:pointer;transition:transform .05s,background .15s,border-color .15s}
+.opt .k{flex:none;width:28px;height:28px;border:2px solid var(--gray);border-radius:8px;display:grid;place-items:center;font-size:14px;color:var(--gray-d);font-weight:800}
+.opt:hover:not(:disabled){background:#f7f7f7}
+.opt:active:not(:disabled){transform:translateY(2px);border-bottom-width:2px;margin-bottom:2px}
+.opt.sel{background:var(--blue-l);border-color:var(--blue-b);color:var(--blue-d)}
+.opt.sel .k{border-color:var(--blue-b);color:var(--blue-d)}
+.opt.ok{background:var(--green-l);border-color:var(--green-b);color:var(--green-d);animation:pop .3s}
+.opt.ok .k{border-color:var(--green-b);color:var(--green-d)}
+.opt.bad{background:var(--red-l);border-color:var(--red-b);color:var(--red-d);animation:shake .35s}
+.opt.bad .k{border-color:var(--red-b);color:var(--red-d)}
+.opt.dim{opacity:.5}
+.opt:disabled{cursor:default}
+@keyframes pop{50%{transform:scale(1.04)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+.ti{width:100%;font:inherit;font-size:19px;font-weight:700;color:var(--ink);padding:16px 18px;border:2px solid var(--gray);border-radius:16px;background:#f7f7f7;outline:none}
+.ti:focus{border-color:var(--blue-b);background:#fff}
+.ti.ok{border-color:var(--green-b);background:var(--green-l);color:var(--green-d)}
+.ti.bad{border-color:var(--red-b);background:var(--red-l);color:var(--red-d);text-decoration:line-through}
+
+.flipcard{display:block;width:100%;max-width:440px;margin:0 auto;aspect-ratio:3/2.3;perspective:1200px;background:none;border:0;padding:0;cursor:pointer}
+.flipcard .inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.4,1.3,.5,1);transform-style:preserve-3d}
+.flipcard.flipped .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:2px solid var(--gray);border-bottom-width:5px;border-radius:20px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;overflow:hidden}
+.face img{width:100%;flex:1;min-height:0;object-fit:contain}
+.back{transform:rotateY(180deg);background:var(--blue-l);border-color:var(--blue-b)}
+.back img{max-height:48%;background:#fff;border-radius:12px}
+.back .nm{font-size:26px;font-weight:900;color:var(--blue-d);margin-top:8px;text-align:center;line-height:1.15}
+.back .nm2{font-size:16px;color:var(--muted);margin-top:4px;text-align:center}
+.tip{text-align:center;color:var(--gray-d);font-size:15px;margin:12px 0 0}
+
+/* milestone & done */
+.center{text-align:center;padding:8px 0}
+.big{font-size:32px;font-weight:900;margin:4px 0 16px;color:var(--ink-2)}
+.big.g{color:var(--green)}.big.o{color:var(--orange)}
+.ring{--p:0;--c:var(--green);width:170px;height:170px;margin:0 auto 18px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--gray) 0);display:grid;place-items:center;animation:pop .5s}
+.ring span{width:136px;height:136px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:42px;font-weight:900;color:var(--c)}
+.sub{color:var(--muted);font-size:17px;margin:0 auto 18px;max-width:420px;line-height:1.4}
+.tiles{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.tile{width:140px;border:2px solid var(--c);border-radius:16px;overflow:hidden;background:var(--c)}
+.tile b{display:block;color:#fff;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;padding:5px 0 4px}
+.tile span{display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;border-radius:13px;padding:12px 0;font-size:24px;font-weight:900;color:var(--c)}
+.tile svg{width:22px;height:22px}
+.missed{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:18px;text-align:left}
+.missed div{border:2px solid var(--gray);border-radius:14px;padding:6px 8px 8px;font-size:14px}
+.missed img{width:100%;aspect-ratio:3/2;object-fit:contain;display:block}
+.missed small{display:block;color:var(--muted);font-weight:600}
+
+/* bottom action bar */
+.bar{position:sticky;bottom:0;z-index:5;background:#fff;border-top:2px solid var(--gray);margin-top:18px}
+.bar.good{background:var(--green-l);border-color:var(--green-l)}
+.bar.bad{background:var(--red-l);border-color:var(--red-l)}
+.bar-in{max-width:640px;margin:0 auto;padding:14px 16px calc(14px + env(safe-area-inset-bottom));display:flex;gap:12px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.bar.good .bar-in,.bar.bad .bar-in{animation:rise .22s ease-out}
+@keyframes rise{from{transform:translateY(24px);opacity:0}}
+.msg{flex:1 1 260px;display:flex;gap:12px;align-items:center}
+.ico{flex:none;width:52px;height:52px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.ico svg{width:30px;height:30px}
+.good .ttl{color:var(--green-d)}.bad .ttl{color:var(--red-d)}
+.ttl{font-size:22px;font-weight:900;line-height:1.15}
+.msub{font-size:16px;margin-top:2px;line-height:1.3}
+.good .msub{color:var(--green-d)}.bad .msub{color:var(--red-d)}
+.msub b{font-size:19px;font-weight:900}
+.msub span{display:block;font-weight:600;opacity:.85}
+
+.btn{border:0;border-radius:16px;min-height:50px;padding:0 24px;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff;cursor:pointer;transition:filter .1s,transform .05s;flex:none;min-width:150px}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:none!important}
+.btn.green{background:var(--green);box-shadow:0 4px 0 var(--green-d)}
+.btn.red{background:var(--red);box-shadow:0 4px 0 var(--red-d)}
+.btn.blue{background:var(--blue);box-shadow:0 4px 0 var(--blue-d)}
+.btn.ghost{background:#fff;color:var(--gray-d);border:2px solid var(--gray);box-shadow:0 4px 0 var(--gray);min-width:0}
+.btn:hover:not(:disabled){filter:brightness(1.06)}
+.btn:disabled{background:var(--gray);color:var(--gray-d);box-shadow:0 4px 0 var(--gray);cursor:default}
+.btn.wide{flex:1 1 100%}
+@media (max-width:600px){
+  .bar-in>.btn{flex:1 1 0;min-width:0;padding:0 12px}
+  .bar-in>.msg+.btn{flex-basis:100%}
+}
+
+/* settings */
+.settings{max-width:640px;margin:0 auto;padding:28px 16px 12px}
+.settings h2{font-size:22px;font-weight:900;color:var(--ink-2);margin:0 0 14px}
+.set{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 0;border-bottom:2px solid var(--gray)}
+.set>span{font-size:17px}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button,.chip{border:2px solid var(--gray);border-bottom-width:4px;background:#fff;border-radius:12px;padding:8px 14px;font-size:15px;font-weight:800;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed=true],.chip[aria-pressed=true]{background:var(--blue-l);border-color:var(--blue-b);color:var(--blue-d)}
+.seg button:active,.chip:active{transform:translateY(2px);border-bottom-width:2px;margin-bottom:2px}
+details.fold{border-bottom:2px solid var(--gray)}
+details.fold summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;font-size:17px}
+details.fold summary::-webkit-details-marker{display:none}
+details.fold summary em{font-style:normal;color:var(--blue-d)}
+details.fold summary::after{content:"";width:10px;height:10px;border-right:3px solid var(--gray-d);border-bottom:3px solid var(--gray-d);transform:rotate(45deg);margin:0 6px 4px 0;transition:transform .2s}
+details.fold[open] summary::after{transform:rotate(-135deg);margin-bottom:-4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:2px 0 16px}
+.all{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:2px 0 16px}
+.all figure{margin:0;border:2px solid var(--gray);border-radius:14px;padding:6px 8px 8px;font-size:14px}
+.all img{width:100%;aspect-ratio:3/2;object-fit:contain;display:block}
+.all small{display:block;color:var(--muted);font-weight:600}
+footer{max-width:640px;margin:0 auto;padding:18px 16px 32px;font-size:13px;font-weight:600;color:var(--gray-d);text-align:center}
+footer a{color:inherit}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="progress" aria-hidden="true"><div id="fill"></div></div>
+    <div class="pill pct" id="pct" hidden title="Correct answers"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="pctv">0%</span></div>
+    <div class="pill streak" id="streak" title="Streak"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 1.5c.6 3.6 5.5 6.2 5.5 12a7 7 0 0 1-14 0c0-3.3 1.8-5.6 3.4-7 .1 2.2 1 3.6 2.4 4.2-.5-3.9.5-6.8 2.7-9.2z"/><path fill="#ffc800" d="M12 22a3.6 3.6 0 0 1-3.6-3.6c0-2.2 1.7-3.4 2.6-4.6.4 1.5 1.4 2.2 2.3 2.4.4-.8.5-1.6.4-2.4 1.3 1 2 2.6 2 4.6A3.6 3.6 0 0 1 12 22z"/></svg><span id="streakv">0</span></div>
+  </div>
+  <main id="stage" aria-live="polite"></main>
+</div>
+
+<div class="bar" id="bar"><div class="bar-in" id="barin"></div></div>
+
+<section class="settings" aria-labelledby="setH">
+  <h2 id="setH" data-t="settings"></h2>
+  <div class="set"><span data-t="language"></span>
+    <div class="seg"><button data-lang="en">English</button><button data-lang="nl">Nederlands</button></div>
+  </div>
+  <div class="set"><span data-t="mode"></span>
+    <div class="seg"><button data-mode="mc" data-t="mc"></button><button data-mode="type" data-t="type"></button><button data-mode="flash" data-t="flash"></button></div>
+  </div>
+  <details class="fold"><summary><span><span data-t="categories"></span>: <em id="catName"></em></span></summary><div class="chips" id="cats"></div></details>
+  <div class="set"><span data-t="sound"></span>
+    <div class="seg"><button data-sound="1" data-t="on"></button><button data-sound="0" data-t="off"></button></div>
+  </div>
+  <details class="fold"><summary><span data-t="browse"></span></summary><div class="all" id="all"></div></details>
+</section>
+
+<footer>Pictures &amp; names from the tool sheets at the <a href="https://www.tue.nl/en/education/tue-innovation-space">TU/e Innovation Space</a> workshop · <a href="/">bramgrooten.nl</a></footer>
+
+<script>
+{
+const TOOLS = [{"id":"module-hamer","nl":"Module hamer","en":"Module hammer","cat":"hand"},{"id":"mini-module-hamer","nl":"Mini module hamer","en":"Mini module hammer","cat":"hand"},{"id":"hamer","nl":"Hamer","en":"Hammer","cat":"hand"},{"id":"nylon-hamer","nl":"Nylon hamer","en":"Nylon hammer","cat":"hand"},{"id":"geisoleerde-tangen-set","nl":"Geïsoleerde tangen set","en":"Set of isolated pliers","cat":"hand"},{"id":"normale-tangen-set","nl":"Normale tangen set","en":"Set of pliers","cat":"hand"},{"id":"metaalzaag","nl":"Metaalzaag","en":"Hacksaw","cat":"hand"},{"id":"junior-metaalzaag","nl":"Junior metaalzaag","en":"Mini hacksaw","cat":"hand"},{"id":"handzaag","nl":"Handzaag","en":"Handsaw","cat":"hand"},{"id":"toffelzaag","nl":"Toffelzaag","en":"Tenon Saw","cat":"hand"},{"id":"figuurzaag","nl":"Figuurzaag","en":"Fret saw","cat":"hand"},{"id":"kabelschoentang","nl":"Kabelschoentang","en":"Crimping tool","cat":"hand"},{"id":"waterpomptang","nl":"Waterpomptang","en":"Pipe wrench","cat":"hand"},{"id":"strip-tang","nl":"Strip tang","en":"Wire stripper","cat":"hand"},{"id":"beitels","nl":"Beitels","en":"Chisels","cat":"hand"},{"id":"schroevendraaiers","nl":"Schroevendraaiers","en":"Screwdrivers","cat":"hand"},{"id":"vijlen","nl":"Vijlen","en":"Files","cat":"hand"},{"id":"priem","nl":"Priem","en":"Punch","cat":"hand"},{"id":"kraspen","nl":"Kraspen","en":"Scriber","cat":"hand"},{"id":"inbussleutels","nl":"Inbussleutels","en":"Allen keys","cat":"hand"},{"id":"steeksleutelset","nl":"Steeksleutelset","en":"Combination spanner set","cat":"hand"},{"id":"stanley-mes","nl":"Stanley mes","en":"Stanley knife","cat":"hand"},{"id":"scharen","nl":"Scharen","en":"Scissors","cat":"hand"},{"id":"elektrische-schroevendraaier","nl":"Elektrische schroevendraaier","en":"Electric drill","cat":"power"},{"id":"decoupeerzaag","nl":"Decoupeerzaag","en":"Jigsaw","cat":"power"},{"id":"stiftslijper","nl":"Stiftslijper","en":"Rotary tool","cat":"power"},{"id":"bandslijpmachine","nl":"Bandslijpmachine","en":"Belt sander","cat":"power"},{"id":"vlakschuurmachine","nl":"Vlakschuurmachine","en":"Orbital sander","cat":"power"},{"id":"hete-lucht-pistool","nl":"Hete lucht pistool","en":"Heat gun","cat":"power"},{"id":"rolbandmaat","nl":"Rolbandmaat","en":"Measuring tape","cat":"measure"},{"id":"gradenboog","nl":"Gradenboog","en":"Protractor","cat":"measure"},{"id":"winkelhaak","nl":"Winkelhaak","en":"L-Square","cat":"measure"},{"id":"zwaaihaak","nl":"Zwaaihaak","en":"Bevel","cat":"measure"},{"id":"liniaal","nl":"Liniaal","en":"Ruler","cat":"measure"},{"id":"digitale-schuifmaat","nl":"Digitale schuifmaat","en":"Digital Caliper","cat":"measure"},{"id":"waterpas","nl":"Waterpas","en":"Level","cat":"disposable"},{"id":"lijmpistool","nl":"Lijmpistool","en":"Glue gun","cat":"disposable"},{"id":"lijm","nl":"Lijm","en":"Glue","cat":"disposable"},{"id":"wd40","nl":"WD40","en":"WD40","cat":"disposable"},{"id":"schuurpapier","nl":"Schuurpapier","en":"Sand paper","cat":"disposable"},{"id":"boutjes-en-moertjes","nl":"Boutjes en moertjes","en":"Nuts and bolts","cat":"disposable"},{"id":"schroeven","nl":"Schroeven","en":"Screws","cat":"disposable"},{"id":"spijkers","nl":"Spijkers","en":"Nails","cat":"disposable"},{"id":"tiewraps","nl":"Tiewraps","en":"Cable ties","cat":"disposable"},{"id":"tape","nl":"Tape (diverse soorten)","en":"Tape (various types)","cat":"disposable"},{"id":"veger-en-blik","nl":"Veger en blik","en":"Dustpan and brush","cat":"utility"},{"id":"emmer","nl":"Emmer","en":"Bucket","cat":"utility"},{"id":"stofzuiger","nl":"Stofzuiger","en":"Vacuum cleaner","cat":"utility"},{"id":"stekkerdoos","nl":"Stekkerdoos","en":"Electricity cable","cat":"utility"},{"id":"handschoenen","nl":"Handschoenen","en":"Gloves","cat":"safety"},{"id":"gehoorkappen","nl":"Gehoorkappen","en":"Ear caps","cat":"safety"},{"id":"veiligheidsbril","nl":"Veiligheidsbril","en":"Safety glasses","cat":"safety"},{"id":"oordopjes","nl":"Oordopjes","en":"Ear plugs","cat":"safety"},{"id":"snijplank","nl":"Snijplank","en":"Cutting board","cat":"other"},{"id":"lijmklemmen","nl":"Lijm klemmen","en":"Glue clamps","cat":"other"},{"id":"veerklemmen","nl":"Veerklemmen","en":"Spring clamps","cat":"other"},{"id":"magneetklemmen","nl":"Magneetklemmen","en":"Magnetic clamps","cat":"other"},{"id":"weegschaal","nl":"Weegschaal","en":"Scale","cat":"other"},{"id":"tafel-bankschroef","nl":"Tafel-bankschroef","en":"Vice","cat":"other"},{"id":"stiften","nl":"Stiften","en":"Markers","cat":"other"},{"id":"glassnijder","nl":"Glassnijder","en":"Glass cutter","cat":"other"},{"id":"pijpenbuiger","nl":"Pijpenbuiger","en":"Pipe bender","cat":"other"},{"id":"pijpensnijder","nl":"Pijpensnijder","en":"Pipe cutter","cat":"other"},{"id":"geisoleerde-pincet","nl":"Geïsoleerde pincet","en":"Isolated tweezers","cat":"other"},{"id":"kabels","nl":"Kabels","en":"Cables","cat":"other"},{"id":"soldeertin","nl":"Soldeertin","en":"Solder","cat":"other"},{"id":"desoldeerpomp","nl":"Desoldeerpomp","en":"Desoldering pump","cat":"other"},{"id":"spanningzoeker","nl":"Spanningzoeker","en":"Voltage tester","cat":"other"},{"id":"multimeter","nl":"Multimeter","en":"Multimeter","cat":"other"},{"id":"vergrootglas","nl":"Vergrootglas","en":"Magnifying tool","cat":"other"}];
+
+const T = {
+  en:{which:"Which tool is this?",whichType:"Type the name of this tool",whichFlash:"Do you know this tool?",tapFlip:"Tap the card to flip it",
+      check:"Check",skip:"Skip",cont:"Continue",gotIt:"Got it",show:"Show answer",knew:"I knew it",didnt:"Didn't know",
+      good:["Nice!","Great job!","Correct!","Excellent!","Awesome!"],inARow:n=>`${n} in a row!`,
+      correctAnswer:"Correct answer:",almost:"Correct, but watch the spelling:",inOther:"In Dutch:",placeholder:"Type in English",
+      mile:p=>p>=90?"Amazing!":p>=70?"Great job!":p>=50?"Good effort!":"Keep going!",
+      mileSub:(c,n)=>`You got ${c} of ${n} right. From now on your score is shown at the top.`,
+      accuracy:"Score",best:"Best streak",doneT:"Deck complete!",doneSub:"Review the ones you missed:",perfect:"Every tool right on the first try!",
+      retry:"Practice mistakes",again:"Start over",
+      settings:"Practice options",language:"Language",mode:"Mode",mc:"Multiple choice",type:"Typing",flash:"Flashcards",categories:"Categories",
+      sound:"Sound",on:"On",off:"Off",browse:"Browse all 70 tools",
+      all:"All",hand:"Hand tools",power:"Power tools",measure:"Measurement tools",disposable:"Disposables",utility:"Utilities",safety:"Safety equipment",other:"Other"},
+  nl:{which:"Welk gereedschap is dit?",whichType:"Typ de naam van dit gereedschap",whichFlash:"Ken je dit gereedschap?",tapFlip:"Tik op de kaart om hem om te draaien",
+      check:"Controleer",skip:"Overslaan",cont:"Doorgaan",gotIt:"Begrepen",show:"Toon antwoord",knew:"Wist ik",didnt:"Wist ik niet",
+      good:["Goed zo!","Top!","Helemaal goed!","Uitstekend!","Super!"],inARow:n=>`${n} op rij!`,
+      correctAnswer:"Juiste antwoord:",almost:"Goed, maar let op de spelling:",inOther:"In het Engels:",placeholder:"Typ in het Nederlands",
+      mile:p=>p>=90?"Geweldig!":p>=70?"Goed bezig!":p>=50?"Mooi geprobeerd!":"Ga zo door!",
+      mileSub:(c,n)=>`Je had er ${c} van de ${n} goed. Vanaf nu staat je score bovenaan.`,
+      accuracy:"Score",best:"Beste reeks",doneT:"Stapel klaar!",doneSub:"Herhaal de tools die je fout had:",perfect:"Alles in één keer goed!",
+      retry:"Oefen fouten",again:"Opnieuw",
+      settings:"Oefenopties",language:"Taal",mode:"Modus",mc:"Meerkeuze",type:"Typen",flash:"Flitskaarten",categories:"Categorieën",
+      sound:"Geluid",on:"Aan",off:"Uit",browse:"Bekijk alle 70 gereedschappen",
+      all:"Alles",hand:"Handgereedschap",power:"Elektrisch gereedschap",measure:"Meetgereedschap",disposable:"Verbruiksartikelen",utility:"Hulpmiddelen",safety:"Veiligheid",other:"Overig"}
+};
+const CATS=["all","hand","power","measure","disposable","utility","safety","other"];
+const MILESTONE=5;
+
+let saved={};try{saved=JSON.parse(localStorage.getItem("toolsQuiz")||"{}")}catch(e){}
+const S={lang:saved.lang==="nl"?"nl":"en",sound:saved.sound!==false,mode:"mc",cat:"all",
+  queue:[],total:0,seen:new Set(),learned:new Set(),missed:new Set(),answered:0,correct:0,streak:0,best:0,
+  cur:null,phase:"ask",sel:null,typed:"",flipped:false,milestone:false,fb:null};
+const save=()=>{try{localStorage.setItem("toolsQuiz",JSON.stringify({lang:S.lang,sound:S.sound}))}catch(e){}};
+
+const $=s=>document.querySelector(s);
+const t=k=>T[S.lang][k];
+const other=()=>S.lang==="nl"?"en":"nl";
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const img=x=>`img/${x.id}.jpg`;
+const pool=()=>S.cat==="all"?TOOLS:TOOLS.filter(x=>x.cat===S.cat);
+const pct=()=>S.answered?Math.round(100*S.correct/S.answered):0;
+const pctColor=p=>p>=70?"var(--green)":p>=50?"var(--orange)":"var(--red)";
+const CHECK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="var(--green)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CROSS='<svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="var(--red)" stroke-width="3.6" stroke-linecap="round"/></svg>';
+const FLAME=$("#streak svg").outerHTML;
+
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\(.*?\)/g," ").trim().replace(/^(de|het|een|the|a|an)\s+/,"").replace(/[^a-z0-9]+/g,"")}
+function lev(a,b){let p=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const c=[i];for(let j=1;j<=b.length;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[b.length]}
+function grade(input,x){
+  const want=x[S.lang],g=norm(input);if(!g)return "bad";
+  const v=new Set([norm(want)]);if(x.id==="multimeter")v.add("mulitmeter");
+  if(v.has(g))return "good";
+  const d=Math.min(...[...v].map(w=>lev(g,w))),len=norm(want).length;
+  return d<=(len>=12?2:len>=5?1:0)?"almost":"bad";
+}
+
+let ac=null;
+function sfx(kind){
+  if(!S.sound)return;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==="suspended")ac.resume();
+    const now=ac.currentTime;
+    const seq=kind==="good"?[[784,0,"sine",.2],[1175,.09,"sine",.2]]
+      :kind==="bad"?[[196,0,"triangle",.22],[147,.13,"triangle",.22]]
+      :[[523,0,"sine",.18],[659,.12,"sine",.18],[784,.24,"sine",.18],[1047,.38,"sine",.2]];
+    for(const [f,d,type,v] of seq){
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type=type;o.frequency.value=f;
+      g.gain.setValueAtTime(0,now+d);g.gain.linearRampToValueAtTime(v,now+d+.015);g.gain.exponentialRampToValueAtTime(.0001,now+d+.3);
+      o.connect(g).connect(ac.destination);o.start(now+d);o.stop(now+d+.35);
+    }
+  }catch(e){}
+}
+
+function start(list,reset){
+  S.queue=shuffle(list||pool());S.total=S.queue.length;S.seen=new Set();S.learned=new Set();S.missed=new Set();
+  if(reset){S.answered=0;S.correct=0;S.streak=0;S.best=0;S.milestone=false}
+  next();
+}
+function next(){
+  S.cur=S.queue.shift()||null;S.sel=null;S.typed="";S.flipped=false;S.fb=null;
+  S.phase=S.cur?"ask":"done";
+  if(S.phase==="done")sfx("fanfare");
+  if(S.queue[0])new Image().src=img(S.queue[0]);
+  render();
+  if(S.mode==="type"&&S.cur)$("#ti")?.focus({preventScroll:true});
+}
+function cont(){
+  if(!S.milestone&&S.answered>=MILESTONE){S.milestone=true;S.phase="milestone";sfx("fanfare");render();window.scrollTo({top:0,behavior:"smooth"});return}
+  next();
+}
+function record(ok){
+  const x=S.cur;S.seen.add(x.id);S.answered++;
+  if(ok){S.correct++;S.streak++;S.best=Math.max(S.best,S.streak);S.learned.add(x.id)}
+  else{S.streak=0;S.missed.add(x.id);S.queue.splice(Math.min(S.queue.length,3+(Math.random()*3|0)),0,x)}
+  sfx(ok?"good":"bad");
+}
+function answer(ok,how){
+  record(ok);
+  const g=t("good");
+  const title=!ok?t("correctAnswer"):how==="almost"?t("almost"):(S.streak>=3&&S.streak%5===0||S.streak===3)?t("inARow")(S.streak):g[Math.random()*g.length|0];
+  S.fb={ok,how,title};S.phase="feedback";render();
+  const p=$("#streak");if(ok&&p){p.classList.remove("bump");void p.offsetWidth;p.classList.add("bump")}
+}
+
+function opts(x){
+  if(x._o&&x._ol===S.lang)return x._o;
+  const same=shuffle(TOOLS.filter(y=>y.id!==x.id&&y.cat===x.cat));
+  const rest=shuffle(TOOLS.filter(y=>y.cat!==x.cat));
+  const names=new Set([x[S.lang]]),d=[];
+  for(const y of same.slice(0,3).concat(rest))if(d.length<3&&!names.has(y[S.lang])){names.add(y[S.lang]);d.push(y)}
+  x._o=shuffle([x,...d]);x._ol=S.lang;return x._o;
+}
+
+function renderTop(){
+  $("#fill").style.width=(S.total?100*S.learned.size/S.total:0)+"%";
+  const p=pct(),el=$("#pct");
+  el.hidden=!S.milestone;el.classList.toggle("mid",p<70&&p>=50);el.classList.toggle("low",p<50);
+  $("#pctv").textContent=p+"%";
+  $("#streak").classList.toggle("on",S.streak>0);$("#streakv").textContent=S.streak;
+}
+
+function renderStage(){
+  const st=$("#stage"),x=S.cur,fb=S.phase==="feedback";
+  if(S.phase==="milestone"){
+    const p=pct();
+    st.innerHTML=`<div class="center"><h2 class="big ${p>=70?"g":"o"}">${t("mile")(p)}</h2>
+      <div class="ring" style="--p:${p};--c:${pctColor(p)}"><span>${p}%</span></div>
+      <p class="sub">${t("mileSub")(S.correct,S.answered)}</p>
+      <div class="tiles"><div class="tile" style="--c:${pctColor(p)}"><b>${t("accuracy")}</b><span>${p}%</span></div>
+      <div class="tile" style="--c:var(--orange)"><b>${t("best")}</b><span>${FLAME}${S.best}</span></div></div></div>`;
+    return;
+  }
+  if(S.phase==="done"){
+    const p=pct(),m=TOOLS.filter(y=>S.missed.has(y.id));
+    st.innerHTML=`<div class="center"><h2 class="big g">${t("doneT")}</h2>
+      <div class="ring" style="--p:${p};--c:${pctColor(p)}"><span>${p}%</span></div>
+      <p class="sub">${m.length?t("doneSub"):t("perfect")}</p>
+      ${m.length?`<div class="missed">${m.map(y=>`<div><img src="${img(y)}" alt="">${esc(y[S.lang])}<small>${esc(y[other()])}</small></div>`).join("")}</div>`:""}</div>`;
+    return;
+  }
+  if(S.mode==="mc"){
+    st.innerHTML=`<h2 class="q">${t("which")}</h2><div class="pic"><img src="${img(x)}" alt=""></div>
+      <div class="opts">${opts(x).map((o,i)=>{
+        let c="opt";
+        if(fb)c+=o.id===x.id?" ok":o.id===S.sel?" bad":" dim";else if(o.id===S.sel)c+=" sel";
+        return `<button class="${c}" data-opt="${o.id}"${fb?" disabled":""}><span class="k">${i+1}</span><span>${esc(o[S.lang])}</span></button>`}).join("")}</div>`;
+  }else if(S.mode==="type"){
+    const c=fb?(S.fb.ok?" ok":" bad"):"";
+    st.innerHTML=`<h2 class="q">${t("whichType")}</h2><div class="pic"><img src="${img(x)}" alt=""></div>
+      <input id="ti" class="ti${c}" placeholder="${t("placeholder")}" value="${esc(S.typed)}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"${fb?" disabled":""}>`;
+  }else{
+    st.innerHTML=`<h2 class="q">${t("whichFlash")}</h2>
+      <button class="flipcard${S.flipped?" flipped":""}" id="fc" aria-label="${t("show")}"><div class="inner">
+        <div class="face front"><img src="${img(x)}" alt=""></div>
+        <div class="face back"><img src="${img(x)}" alt=""><div class="nm">${esc(x[S.lang])}</div><div class="nm2">${esc(x[other()])}</div></div>
+      </div></button><p class="tip">${t("tapFlip")}</p>`;
+  }
+}
+
+function renderBar(){
+  const bar=$("#bar"),bi=$("#barin");
+  bar.className="bar"+(S.phase==="feedback"?(S.fb.ok?" good":" bad"):"");
+  let h="";
+  if(S.phase==="feedback"){
+    const x=S.cur,ok=S.fb.ok;
+    const main=!ok||S.fb.how==="almost"?`<b>${esc(x[S.lang])}</b>`:"";
+    h=`<div class="msg"><div class="ico">${ok?CHECK:CROSS}</div><div><div class="ttl">${esc(S.fb.title)}</div>
+       <div class="msub">${main}<span>${t("inOther")} ${esc(x[other()])}</span></div></div></div>
+       <button class="btn ${ok?"green":"red"}" data-act="cont">${ok?t("cont"):t("gotIt")}</button>`;
+  }else if(S.phase==="milestone"){
+    h=`<button class="btn green wide" data-act="cont">${t("cont")}</button>`;
+  }else if(S.phase==="done"){
+    h=(S.missed.size?`<button class="btn ghost" data-act="retry">${t("retry")}</button>`:"")+`<button class="btn green" data-act="again">${t("again")}</button>`;
+  }else if(S.mode==="flash"){
+    h=S.flipped?`<button class="btn red" data-act="no">${t("didnt")}</button><button class="btn green" data-act="yes">${t("knew")}</button>`
+               :`<button class="btn blue wide" data-act="flip">${t("show")}</button>`;
+  }else{
+    const ready=S.mode==="mc"?!!S.sel:!!S.typed.trim();
+    h=`<button class="btn ghost" data-act="skip">${t("skip")}</button><button class="btn green" data-act="check"${ready?"":" disabled"}>${t("check")}</button>`;
+  }
+  bi.innerHTML=h;
+}
+
+function renderSettings(){
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===S.lang));
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===S.mode));
+  document.querySelectorAll("[data-sound]").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.sound==="1")===S.sound));
+  $("#catName").textContent=t(S.cat);
+  $("#cats").innerHTML=CATS.map(c=>`<button class="chip" data-cat="${c}" aria-pressed="${c===S.cat}">${t(c)} · ${c==="all"?TOOLS.length:TOOLS.filter(x=>x.cat===c).length}</button>`).join("");
+  $("#all").innerHTML=TOOLS.map(x=>`<figure><img src="${img(x)}" alt="${esc(x[S.lang])}" loading="lazy">${esc(x[S.lang])}<small>${esc(x[other()])}</small></figure>`).join("");
+}
+
+function render(){document.documentElement.lang=S.lang;renderTop();renderStage();renderBar();renderSettings()}
+
+function act(a){
+  const x=S.cur;
+  if(a==="check"&&S.phase==="ask"){
+    if(S.mode==="mc"&&S.sel)answer(S.sel===x.id);
+    else if(S.mode==="type"&&S.typed.trim()){const g=grade(S.typed,x);answer(g!=="bad",g)}
+  }
+  else if(a==="skip"&&S.phase==="ask")answer(false,"skip");
+  else if(a==="cont")cont();
+  else if(a==="flip"&&S.phase==="ask"&&S.mode==="flash"){S.flipped=!S.flipped;$("#fc")?.classList.toggle("flipped",S.flipped);renderBar()}
+  else if((a==="yes"||a==="no")&&S.phase==="ask"){record(a==="yes");cont()}
+  else if(a==="retry")start(TOOLS.filter(y=>S.missed.has(y.id)),false);
+  else if(a==="again")start(null,true);
+}
+
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act],[data-opt],#fc,[data-lang],[data-mode],[data-cat],[data-sound]");if(!el)return;
+  if(el.dataset.act)act(el.dataset.act);
+  else if(el.dataset.opt){if(S.phase==="ask"){S.sel=el.dataset.opt;renderStage();renderBar()}}
+  else if(el.id==="fc")act("flip");
+  else if(el.dataset.lang){S.lang=el.dataset.lang;save();render()}
+  else if(el.dataset.sound){S.sound=el.dataset.sound==="1";save();renderSettings();if(S.sound)sfx("good")}
+  else if(el.dataset.mode){
+    if(S.mode===el.dataset.mode)return;
+    S.mode=el.dataset.mode;
+    if(S.phase==="feedback")next();else{S.flipped=false;render();if(S.mode==="type")$("#ti")?.focus({preventScroll:true})}
+    $("#stage").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  else if(el.dataset.cat){S.cat=el.dataset.cat;start(null,false);$("#stage").scrollIntoView({behavior:"smooth",block:"start"})}
+});
+document.addEventListener("input",e=>{if(e.target.id==="ti"){S.typed=e.target.value;renderBar()}});
+document.addEventListener("keydown",e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey||e.target.closest?.(".settings"))return;
+  if(e.target.tagName==="INPUT"){if(e.key==="Enter"){e.preventDefault();act("check")}return}
+  const k=e.key;
+  if(k==="Enter"){
+    e.preventDefault();
+    if(S.phase==="feedback"||S.phase==="milestone")act("cont");
+    else if(S.phase==="done")act("again");
+    else if(S.mode==="mc")act("check");
+    else if(S.mode==="flash"&&!S.flipped)act("flip");
+  }else if(S.phase==="ask"&&S.mode==="mc"&&/^[1-4]$/.test(k)){
+    const o=opts(S.cur)[+k-1];if(o){S.sel=o.id;renderStage();renderBar()}
+  }else if(S.phase==="ask"&&S.mode==="flash"){
+    if(k===" "){e.preventDefault();act("flip")}
+    else if(S.flipped&&k==="ArrowRight")act("yes");
+    else if(S.flipped&&k==="ArrowLeft")act("no");
+  }
+});
+
+start(null,true);
+}
+</script>
+</body>
+</html>
