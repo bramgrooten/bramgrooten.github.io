@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools Quiz · Gereedschap oefenen</title>
+<meta name="description" content="Practice the Dutch and English names of the 70 tools at the TU/e Innovation Space workshop. Flashcards, multiple choice and typing.">
+<meta property="og:title" content="Tools Quiz · Gereedschap oefenen">
+<meta property="og:description" content="Learn the names of the TU/e Innovation Space tools in Dutch and English.">
+<meta property="og:image" content="img/geisoleerde-tangen-set.jpg">
+<style>
+:root{
+  --bg:#f6f4ef; --card:#fff; --ink:#1d1d1f; --muted:#6b6b70; --line:#e3e0d8;
+  --accent:#00a3ad; --accent-ink:#fff; --good:#1f8a4c; --good-bg:#e5f5ec; --bad:#c0392b; --bad-bg:#fbeae8; --warn:#b7791f; --warn-bg:#fdf3e1;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.4;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:1.5rem;margin:0;letter-spacing:-.01em}
+h1 small{display:block;font-size:.85rem;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:2px}
+.seg{display:inline-flex;background:#e9e6de;border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;font:inherit;font-size:.9rem;padding:7px 14px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.seg button[aria-pressed=true]{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.controls{display:grid;gap:10px;margin-bottom:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row .lbl{font-size:.8rem;color:var(--muted);min-width:76px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--card);font:inherit;font-size:.82rem;padding:5px 11px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stats{display:flex;gap:14px;font-size:.85rem;color:var(--muted);margin:4px 0 10px;flex-wrap:wrap}
+.stats b{color:var(--ink)}
+.bar{height:6px;background:#e3e0d8;border-radius:99px;overflow:hidden;margin-bottom:14px}
+.bar>div{height:100%;background:var(--accent);width:0;transition:width .3s}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 24px rgba(0,0,0,.06);padding:18px}
+.pic{display:flex;align-items:center;justify-content:center;background:#fafafa;border-radius:12px;aspect-ratio:3/2;overflow:hidden;margin-bottom:14px}
+.pic img{width:100%;height:100%;object-fit:contain;image-rendering:auto}
+.prompt{text-align:center;font-size:.9rem;color:var(--muted);margin:0 0 12px}
+.answer{text-align:center;margin:0 0 6px}
+.answer .main{font-size:1.5rem;font-weight:700}
+.answer .sub{font-size:.95rem;color:var(--muted);margin-top:2px}
+.flip{width:100%;border:2px dashed var(--line);background:transparent;border-radius:12px;padding:20px;font:inherit;font-size:1rem;color:var(--muted);cursor:pointer}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:480px){.opts{grid-template-columns:1fr}}
+.opt{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:12px 12px;font:inherit;font-size:1rem;text-align:left;cursor:pointer;color:var(--ink);display:flex;gap:10px;align-items:center;min-height:52px}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt .k{font-size:.75rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px;flex:none}
+.opt.correct{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+form.type{display:flex;gap:8px}
+form.type input{flex:1;min-width:0;font:inherit;font-size:1.05rem;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+form.type input:focus{outline:none;border-color:var(--accent)}
+.btn{border:0;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:600;font-size:1rem;padding:12px 18px;border-radius:12px;cursor:pointer}
+.btn.ghost{background:#e9e6de;color:var(--ink)}
+.btn.good{background:var(--good)} .btn.bad{background:var(--bad)}
+.feedback{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:.95rem}
+.feedback.good{background:var(--good-bg);color:var(--good)}
+.feedback.bad{background:var(--bad-bg);color:var(--bad)}
+.feedback.warn{background:var(--warn-bg);color:var(--warn)}
+.feedback strong{color:var(--ink)}
+.actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap}
+.actions .btn{flex:1}
+.hint{font-size:.78rem;color:var(--muted);text-align:center;margin-top:12px}
+.done{text-align:center}
+.done .big{font-size:2.6rem;font-weight:800;margin:6px 0}
+.missed{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:14px 0;text-align:left}
+.missed div{background:#fafafa;border-radius:10px;padding:6px;font-size:.8rem}
+.missed img{width:100%;aspect-ratio:3/2;object-fit:contain;display:block}
+details{margin-top:22px}
+summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+.all{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.all figure{margin:0;background:var(--card);border-radius:12px;padding:8px;font-size:.82rem}
+.all img{width:100%;aspect-ratio:3/2;object-fit:contain;display:block;margin-bottom:4px}
+.all .en{color:var(--muted)}
+footer{margin-top:28px;font-size:.78rem;color:var(--muted);text-align:center}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="title">Gereedschap quiz<small id="subtitle">TU/e Innovation Space</small></h1>
+    <div class="seg" role="group" aria-label="Language">
+      <button data-lang="nl" aria-pressed="true">Nederlands</button>
+      <button data-lang="en" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="row"><span class="lbl" data-t="mode"></span>
+      <div class="seg" role="group" id="modes">
+        <button data-mode="flash" aria-pressed="true" data-t="flash"></button>
+        <button data-mode="mc" aria-pressed="false" data-t="mc"></button>
+        <button data-mode="type" aria-pressed="false" data-t="type"></button>
+      </div>
+    </div>
+    <div class="row"><span class="lbl" data-t="category"></span><div class="chips" id="cats"></div></div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="bar"><div id="bar"></div></div>
+  <main class="card" id="card" aria-live="polite"></main>
+  <div class="hint" id="hint"></div>
+
+  <details>
+    <summary data-t="browse"></summary>
+    <div class="all" id="all"></div>
+  </details>
+
+  <footer>Pictures &amp; names from the tool sheets at the <a href="https://www.tue.nl/en/education/tue-innovation-space">TU/e Innovation Space</a> workshop. · <a href="/">bramgrooten.nl</a></footer>
+</div>
+
+<script>
+const TOOLS = [{"id":"module-hamer","nl":"Module hamer","en":"Module hammer","cat":"hand"},{"id":"mini-module-hamer","nl":"Mini module hamer","en":"Mini module hammer","cat":"hand"},{"id":"hamer","nl":"Hamer","en":"Hammer","cat":"hand"},{"id":"nylon-hamer","nl":"Nylon hamer","en":"Nylon hammer","cat":"hand"},{"id":"geisoleerde-tangen-set","nl":"Geïsoleerde tangen set","en":"Set of isolated pliers","cat":"hand"},{"id":"normale-tangen-set","nl":"Normale tangen set","en":"Set of pliers","cat":"hand"},{"id":"metaalzaag","nl":"Metaalzaag","en":"Hacksaw","cat":"hand"},{"id":"junior-metaalzaag","nl":"Junior metaalzaag","en":"Mini hacksaw","cat":"hand"},{"id":"handzaag","nl":"Handzaag","en":"Handsaw","cat":"hand"},{"id":"toffelzaag","nl":"Toffelzaag","en":"Tenon Saw","cat":"hand"},{"id":"figuurzaag","nl":"Figuurzaag","en":"Fret saw","cat":"hand"},{"id":"kabelschoentang","nl":"Kabelschoentang","en":"Crimping tool","cat":"hand"},{"id":"waterpomptang","nl":"Waterpomptang","en":"Pipe wrench","cat":"hand"},{"id":"strip-tang","nl":"Strip tang","en":"Wire stripper","cat":"hand"},{"id":"beitels","nl":"Beitels","en":"Chisels","cat":"hand"},{"id":"schroevendraaiers","nl":"Schroevendraaiers","en":"Screwdrivers","cat":"hand"},{"id":"vijlen","nl":"Vijlen","en":"Files","cat":"hand"},{"id":"priem","nl":"Priem","en":"Punch","cat":"hand"},{"id":"kraspen","nl":"Kraspen","en":"Scriber","cat":"hand"},{"id":"inbussleutels","nl":"Inbussleutels","en":"Allen keys","cat":"hand"},{"id":"steeksleutelset","nl":"Steeksleutelset","en":"Combination spanner set","cat":"hand"},{"id":"stanley-mes","nl":"Stanley mes","en":"Stanley knife","cat":"hand"},{"id":"scharen","nl":"Scharen","en":"Scissors","cat":"hand"},{"id":"elektrische-schroevendraaier","nl":"Elektrische schroevendraaier","en":"Electric drill","cat":"power"},{"id":"decoupeerzaag","nl":"Decoupeerzaag","en":"Jigsaw","cat":"power"},{"id":"stiftslijper","nl":"Stiftslijper","en":"Rotary tool","cat":"power"},{"id":"bandslijpmachine","nl":"Bandslijpmachine","en":"Belt sander","cat":"power"},{"id":"vlakschuurmachine","nl":"Vlakschuurmachine","en":"Orbital sander","cat":"power"},{"id":"hete-lucht-pistool","nl":"Hete lucht pistool","en":"Heat gun","cat":"power"},{"id":"rolbandmaat","nl":"Rolbandmaat","en":"Measuring tape","cat":"measure"},{"id":"gradenboog","nl":"Gradenboog","en":"Protractor","cat":"measure"},{"id":"winkelhaak","nl":"Winkelhaak","en":"L-Square","cat":"measure"},{"id":"zwaaihaak","nl":"Zwaaihaak","en":"Bevel","cat":"measure"},{"id":"liniaal","nl":"Liniaal","en":"Ruler","cat":"measure"},{"id":"digitale-schuifmaat","nl":"Digitale schuifmaat","en":"Digital Caliper","cat":"measure"},{"id":"waterpas","nl":"Waterpas","en":"Level","cat":"disposable"},{"id":"lijmpistool","nl":"Lijmpistool","en":"Glue gun","cat":"disposable"},{"id":"lijm","nl":"Lijm","en":"Glue","cat":"disposable"},{"id":"wd40","nl":"WD40","en":"WD40","cat":"disposable"},{"id":"schuurpapier","nl":"Schuurpapier","en":"Sand paper","cat":"disposable"},{"id":"boutjes-en-moertjes","nl":"Boutjes en moertjes","en":"Nuts and bolts","cat":"disposable"},{"id":"schroeven","nl":"Schroeven","en":"Screws","cat":"disposable"},{"id":"spijkers","nl":"Spijkers","en":"Nails","cat":"disposable"},{"id":"tiewraps","nl":"Tiewraps","en":"Cable ties","cat":"disposable"},{"id":"tape","nl":"Tape (diverse soorten)","en":"Tape (various types)","cat":"disposable"},{"id":"veger-en-blik","nl":"Veger en blik","en":"Dustpan and brush","cat":"utility"},{"id":"emmer","nl":"Emmer","en":"Bucket","cat":"utility"},{"id":"stofzuiger","nl":"Stofzuiger","en":"Vacuum cleaner","cat":"utility"},{"id":"stekkerdoos","nl":"Stekkerdoos","en":"Electricity cable","cat":"utility"},{"id":"handschoenen","nl":"Handschoenen","en":"Gloves","cat":"safety"},{"id":"gehoorkappen","nl":"Gehoorkappen","en":"Ear caps","cat":"safety"},{"id":"veiligheidsbril","nl":"Veiligheidsbril","en":"Safety glasses","cat":"safety"},{"id":"oordopjes","nl":"Oordopjes","en":"Ear plugs","cat":"safety"},{"id":"snijplank","nl":"Snijplank","en":"Cutting board","cat":"other"},{"id":"lijmklemmen","nl":"Lijm klemmen","en":"Glue clamps","cat":"other"},{"id":"veerklemmen","nl":"Veerklemmen","en":"Spring clamps","cat":"other"},{"id":"magneetklemmen","nl":"Magneetklemmen","en":"Magnetic clamps","cat":"other"},{"id":"weegschaal","nl":"Weegschaal","en":"Scale","cat":"other"},{"id":"tafel-bankschroef","nl":"Tafel-bankschroef","en":"Vice","cat":"other"},{"id":"stiften","nl":"Stiften","en":"Markers","cat":"other"},{"id":"glassnijder","nl":"Glassnijder","en":"Glass cutter","cat":"other"},{"id":"pijpenbuiger","nl":"Pijpenbuiger","en":"Pipe bender","cat":"other"},{"id":"pijpensnijder","nl":"Pijpensnijder","en":"Pipe cutter","cat":"other"},{"id":"geisoleerde-pincet","nl":"Geïsoleerde pincet","en":"Isolated tweezers","cat":"other"},{"id":"kabels","nl":"Kabels","en":"Cables","cat":"other"},{"id":"soldeertin","nl":"Soldeertin","en":"Solder","cat":"other"},{"id":"desoldeerpomp","nl":"Desoldeerpomp","en":"Desoldering pump","cat":"other"},{"id":"spanningzoeker","nl":"Spanningzoeker","en":"Voltage tester","cat":"other"},{"id":"multimeter","nl":"Multimeter","en":"Multimeter","cat":"other"},{"id":"vergrootglas","nl":"Vergrootglas","en":"Magnifying tool","cat":"other"}];
+
+const T = {
+  nl:{title:"Gereedschap quiz",mode:"Modus",flash:"Flitskaarten",mc:"Meerkeuze",type:"Typen",category:"Categorie",
+      all:"Alles",hand:"Handgereedschap",power:"Elektrisch gereedschap",measure:"Meetgereedschap",disposable:"Verbruiksartikelen",utility:"Hulpmiddelen",safety:"Veiligheid",other:"Overig",
+      q:"Hoe heet dit in het Nederlands?",reveal:"Tik om het antwoord te zien",knew:"Wist ik",didnt:"Wist ik niet",
+      placeholder:"Typ de naam…",check:"Check",skip:"Weet ik niet",next:"Volgende",
+      correct:"Goed!",wrong:"Helaas.",almost:"Bijna goed, let op de spelling:",answerIs:"Het antwoord is",
+      score:"Score",streak:"Reeks",left:"Nog",done:"Klaar!",again:"Opnieuw",retryMissed:"Oefen de fouten",missed:"Deze ging je mis:",perfect:"Alles in één keer goed!",
+      browse:"Bekijk alle gereedschappen",hintFlash:"Spatie = omdraaien · ← / → = niet / wel geweten",hintMc:"Toetsen 1–4 om te kiezen · Enter = volgende",hintType:"Enter = check / volgende · hoofdletters en accenten maken niet uit"},
+  en:{title:"Tools quiz",mode:"Mode",flash:"Flashcards",mc:"Multiple choice",type:"Type it",category:"Category",
+      all:"All",hand:"Hand tools",power:"Power tools",measure:"Measurement tools",disposable:"Disposables",utility:"Utilities",safety:"Safety equipment",other:"Other",
+      q:"What is this called in English?",reveal:"Tap to reveal the answer",knew:"Knew it",didnt:"Didn't know",
+      placeholder:"Type the name…",check:"Check",skip:"I don't know",next:"Next",
+      correct:"Correct!",wrong:"Not quite.",almost:"Almost, watch the spelling:",answerIs:"The answer is",
+      score:"Score",streak:"Streak",left:"Left",done:"Done!",again:"Start over",retryMissed:"Practice the misses",missed:"You missed these:",perfect:"All correct on the first try!",
+      browse:"Browse all tools",hintFlash:"Space = flip · ← / → = didn't / did know",hintMc:"Keys 1–4 to choose · Enter = next",hintType:"Enter = check / next · case and accents don't matter"}
+};
+const CATS = ["all","hand","power","measure","disposable","utility","safety","other"];
+
+const S = {lang:"nl",mode:"flash",cat:"all",queue:[],total:0,first:new Set(),missed:new Set(),seen:new Set(),score:0,streak:0,cur:null,answered:false,flipped:false};
+try{const p=JSON.parse(localStorage.getItem("toolsQuiz")||"{}");if(p.lang)S.lang=p.lang;if(p.mode)S.mode=p.mode;if(p.cat)S.cat=p.cat;}catch(e){}
+const save=()=>{try{localStorage.setItem("toolsQuiz",JSON.stringify({lang:S.lang,mode:S.mode,cat:S.cat}))}catch(e){}};
+
+const $=s=>document.querySelector(s);
+const t=k=>T[S.lang][k];
+const other=()=>S.lang==="nl"?"en":"nl";
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const img=x=>`img/${x.id}.jpg`;
+const pool=()=>S.cat==="all"?TOOLS:TOOLS.filter(x=>x.cat===S.cat);
+
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\(.*?\)/g," ").trim().replace(/^(de|het|een|the|a|an)\s+/,"").replace(/[^a-z0-9]+/g,"")}
+function lev(a,b){const m=a.length,n=b.length;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+function grade(input,x){
+  const want=x[S.lang]; const g=norm(input); if(!g) return "bad";
+  const variants=new Set([norm(want),norm(want.replace(/\(.*?\)/g,""))]);
+  if(x.id==="multimeter") variants.add("mulitmeter");
+  if(variants.has(g)) return "good";
+  const d=Math.min(...[...variants].map(v=>lev(g,v)));
+  const len=norm(want).length;
+  if(d<=(len>=12?2:len>=5?1:0)) return "almost";
+  return "bad";
+}
+
+function start(list){
+  S.queue=shuffle(list||pool()); S.total=S.queue.length; S.first=new Set(); S.missed=new Set(); S.seen=new Set(); S.score=0; S.streak=0;
+  next();
+}
+function next(){
+  S.answered=false; S.flipped=false;
+  S.cur=S.queue.shift()||null;
+  render();
+}
+function record(ok){
+  const x=S.cur; if(S.answered) return; S.answered=true;
+  const firstTime=!S.seen.has(x.id); S.seen.add(x.id);
+  if(ok){ if(firstTime){S.first.add(x.id);S.score++;} S.streak++; }
+  else{ S.missed.add(x.id); S.streak=0; const pos=Math.min(S.queue.length,3+(Math.random()*3|0)); S.queue.splice(pos,0,x); }
+}
+
+function statsHtml(){
+  const done=S.total-S.queue.length-(S.cur&&!S.answered?1:0);
+  $("#bar").style.width=(S.total?Math.min(100,100*S.seen.size/S.total):0)+"%";
+  $("#stats").innerHTML=`<span>${t("score")}: <b>${S.score}/${S.total}</b></span><span>${t("streak")}: <b>${S.streak}</b></span><span>${t("left")}: <b>${S.queue.length+(S.cur&&!S.answered?1:0)}</b></span>`;
+}
+
+function namesHtml(x){return `<div class="answer"><div class="main">${esc(x[S.lang])}</div><div class="sub">${esc(x[other()])}</div></div>`}
+
+function render(){
+  document.documentElement.lang=S.lang;
+  $("#title").firstChild.textContent=t("title");
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===S.lang));
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===S.mode));
+  $("#cats").innerHTML=CATS.map(c=>{const n=c==="all"?TOOLS.length:TOOLS.filter(x=>x.cat===c).length;return `<button class="chip" data-cat="${c}" aria-pressed="${c===S.cat}">${t(c)} (${n})</button>`}).join("");
+  $("#hint").textContent=t(S.mode==="flash"?"hintFlash":S.mode==="mc"?"hintMc":"hintType");
+  statsHtml();
+  const card=$("#card"), x=S.cur;
+  if(!x){ renderDone(card); return; }
+  let h=`<div class="pic"><img src="${img(x)}" alt=""></div><p class="prompt">${t("q")}</p>`;
+  if(S.mode==="flash"){
+    if(!S.flipped) h+=`<button class="flip" id="flip">${t("reveal")}</button>`;
+    else h+=namesHtml(x)+`<div class="actions"><button class="btn bad" id="no">${t("didnt")}</button><button class="btn good" id="yes">${t("knew")}</button></div>`;
+  } else if(S.mode==="mc"){
+    if(!x._opts||x._optsLang!==S.lang){
+      const same=shuffle(TOOLS.filter(y=>y.id!==x.id&&y.cat===x.cat&&y[S.lang]!==x[S.lang]));
+      const rest=shuffle(TOOLS.filter(y=>y.id!==x.id&&y.cat!==x.cat));
+      const names=new Set([x[S.lang]]), d=[];
+      for(const y of same.slice(0,3).concat(rest)){ if(d.length<3&&!names.has(y[S.lang])){names.add(y[S.lang]);d.push(y)} }
+      x._opts=shuffle([x,...d]); x._optsLang=S.lang;
+    }
+    h+=`<div class="opts">`+x._opts.map((o,i)=>`<button class="opt" data-id="${o.id}"><span class="k">${i+1}</span><span>${esc(o[S.lang])}</span></button>`).join("")+`</div><div id="fb"></div>`;
+  } else {
+    h+=`<form class="type" id="tf" autocomplete="off"><input id="ti" placeholder="${t("placeholder")}" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="btn" type="submit">${t("check")}</button></form><div class="actions"><button class="btn ghost" id="skip">${t("skip")}</button></div><div id="fb"></div>`;
+  }
+  card.innerHTML=h;
+  bind();
+}
+
+function renderDone(card){
+  const missed=TOOLS.filter(x=>S.missed.has(x.id));
+  let h=`<div class="done"><div>${t("done")}</div><div class="big">${S.score}/${S.total}</div>`;
+  if(!missed.length) h+=`<p>${t("perfect")} 🎉</p>`;
+  else h+=`<p>${t("missed")}</p><div class="missed">`+missed.map(x=>`<div><img src="${img(x)}" alt=""><b>${esc(x[S.lang])}</b><br><span style="color:var(--muted)">${esc(x[other()])}</span></div>`).join("")+`</div>`;
+  h+=`<div class="actions">`+(missed.length?`<button class="btn ghost" id="retry">${t("retryMissed")}</button>`:"")+`<button class="btn" id="again">${t("again")}</button></div></div>`;
+  card.innerHTML=h;
+  $("#again").onclick=()=>start();
+  if(missed.length) $("#retry").onclick=()=>start(missed);
+}
+
+function showFb(kind,x,extra){
+  const fb=$("#fb"); const msg=kind==="good"?t("correct"):kind==="almost"?t("almost"):t("wrong")+" "+t("answerIs");
+  fb.innerHTML=`<div class="feedback ${kind==="almost"?"warn":kind}">${msg} <strong>${esc(x[S.lang])}</strong> · ${esc(x[other()])}${extra||""}</div><div class="actions"><button class="btn" id="nx">${t("next")} →</button></div>`;
+  $("#nx").onclick=next; $("#nx").focus();
+  statsHtml();
+}
+
+function bind(){
+  const x=S.cur;
+  if(S.mode==="flash"){
+    if(!S.flipped) $("#flip").onclick=()=>{S.flipped=true;render()};
+    else{ $("#yes").onclick=()=>{record(true);next()}; $("#no").onclick=()=>{record(false);next()}; }
+  } else if(S.mode==="mc"){
+    document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b.dataset.id));
+  } else {
+    const ti=$("#ti"); setTimeout(()=>ti.focus({preventScroll:true}),0);
+    $("#tf").onsubmit=e=>{e.preventDefault(); if(S.answered){next();return} const g=grade(ti.value,x); if(!ti.value.trim())return; record(g!=="bad"); ti.disabled=true; showFb(g,x,g==="bad"?`<br><span style="color:var(--muted)">↳ ${esc(ti.value)}</span>`:""); $("#skip").remove();};
+    $("#skip").onclick=()=>{record(false); ti.disabled=true; showFb("bad",x); $("#skip").remove();};
+  }
+}
+function pick(id){
+  if(S.answered) return; const x=S.cur; const ok=id===x.id; record(ok);
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true; if(b.dataset.id===x.id)b.classList.add("correct"); else if(b.dataset.id===id)b.classList.add("wrong");});
+  showFb(ok?"good":"bad",x);
+}
+
+document.addEventListener("click",e=>{
+  const l=e.target.closest("[data-lang]"); if(l){S.lang=l.dataset.lang;save();render();return}
+  const m=e.target.closest("[data-mode]"); if(m){S.mode=m.dataset.mode;save();S.answered=false;S.flipped=false;render();return}
+  const c=e.target.closest("[data-cat]"); if(c){S.cat=c.dataset.cat;save();start();return}
+});
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT"||e.metaKey||e.ctrlKey||e.altKey) return;
+  if(S.mode==="flash"&&S.cur){
+    if(e.key===" "&&!S.flipped){e.preventDefault();S.flipped=true;render()}
+    else if(S.flipped&&e.key==="ArrowRight"){record(true);next()}
+    else if(S.flipped&&e.key==="ArrowLeft"){record(false);next()}
+  } else if(S.mode==="mc"&&S.cur){
+    if(/^[1-4]$/.test(e.key)&&!S.answered){const b=document.querySelectorAll(".opt")[+e.key-1]; if(b) pick(b.dataset.id)}
+  }
+});
+
+function renderAll(){
+  $("#all").innerHTML=TOOLS.map(x=>`<figure><img src="${img(x)}" alt="${esc(x.en)}" loading="lazy"><b>${esc(x.nl)}</b><div class="en">${esc(x.en)}</div></figure>`).join("");
+}
+renderAll();
+start();
+</script>
+</body>
+</html>
